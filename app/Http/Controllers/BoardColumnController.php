@@ -10,7 +10,8 @@ class BoardColumnController extends Controller
 {
     public function index()
     {
-        $columns = BoardColumn::all();
+        $boardId = \request()->boardId;
+        $columns = BoardColumn::where('board_id', $boardId)->orderBy('index')->get();
         return $columns;
     }
 }

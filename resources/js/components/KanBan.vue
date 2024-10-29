@@ -1,50 +1,72 @@
 <template>
-    <div class="flex justify-around p-5 bg-gray-100 min-h-screen">
+  <div>
+    <h1>{{ board.name }}</h1>
+    <div class="flex justify-start p-3 min-h-screen" :style="{ background: board.background }">
       <KanbanColumn
-        v-for="column in columns"
-        :key="column"
-        :status="column"
-        :cards="cards.filter(card => card.status === column)"
-        @moveCard="moveCard"
-      ></KanbanColumn>
+      v-for="column in columns"
+      :key="column.id"
+      :id="column.id"
+      :name="column.name"
+      :background="column.background"
+      :tasks="column.tasks"
+      >
+      </KanbanColumn>
     </div>
-  </template>
+  </div>
+</template>
 
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, provide } from 'vue';
 import KanbanColumn from './KanbanColumn.vue';
 import axios from 'axios';
 
-const cards = ref([{ id: 1, title:'task1', status: 'Done'}]);
+const boardId = 1;
+const columns = ref([]);
+const tasks = ref([]);
 
-const getTasks = () => {
-  axios.get('/tasks')
-  .then((response) => {
-    cards.value = response.data;
+const board = ref({
+  name: 'default',
+  background: '#ffffff'
+});
+
+const initKanBan = () => {
+  axios.get('/api/kanban', {
+    params: {
+      boardId: boardId
+    }
   })
-}
-
-const columns = ref(['New', 'To Do', 'In Progress', 'Done']); // axios call
-
-const getColumns = () => {
-  axios.get('/columns')
-  .then((response) => {
-    columns.value = response.data;
-  })
-}
-
-
-const board = [];// axios call
-const moveCard = (cardId, newStatus) => {
-  const card = cards.value.find(card => card.id === cardId);
-  if (card) {
-    card.status = newStatus;
-  }
+    .then((response) => {
+      board.value = response.data;
+      columns.value = response.data.columns;
+    });
 };
 
+const taskTypes = ref([]);
+
+const getTaskTypes = () => {
+  axios.get('/api/tasktypes')
+    .then((response) => {
+      taskTypes.value = response.data;
+    });
+};
+
+const taskStatuses = ref([]);
+
+const getTaskStatuses = () => {
+  axios.get('/api/taskstatuses')
+    .then((response) => {
+      taskStatuses.value = response.data;
+    });
+};
+
+// provide taskType to children
+provide('taskTypes', taskTypes);
+provide('taskStatuses', taskStatuses);
+
 onMounted(() => {
-  getTasks();
-  getColumns();
+  initKanBan();
+  getTaskTypes();
+  getTaskStatuses();
 })
 
 </script>

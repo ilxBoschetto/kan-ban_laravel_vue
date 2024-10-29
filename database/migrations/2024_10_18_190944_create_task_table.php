@@ -45,6 +45,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->bigInteger('index');
+            $table->string('background');
             $table->foreignId('board_id')->constrained('boards')->onDelete('cascade');
             $table->timestamps();
         });
@@ -68,6 +69,47 @@ return new class extends Migration
             ['name' => 'In Progress', 'background_color' => '#e67e22'],
             ['name' => 'Completed', 'background_color' => '#2ecc71'],
         ]);
+
+        DB::table('boards')->insert([
+            ['name' => 'Default Board', 'background' => '#3498db']
+        ]);
+
+        // Insert tasks
+        $taskTypeIds = DB::table('task_types')->pluck('id');
+        $taskStatusIds = DB::table('task_statuses')->pluck('id');
+
+        for ($i = 1; $i <= 10; $i++) {
+            DB::table('tasks')->insert([
+                'name' => 'Task ' . $i,
+                'task_type_id' => $taskTypeIds->random(),
+                'task_status_id' => $taskStatusIds->random(),
+                'created_at' => now(),
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Insert board columns
+        $boardColumns = [
+            ['name' => 'Backlog', 'index' => 1000, 'background' => '#f39c12', 'board_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'In Progress', 'index' => 2000, 'background' => '#2980b9', 'board_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+            ['name' => 'Completed', 'index' => 3000, 'background' => '#27ae60', 'board_id' => 1, 'created_at' => now(), 'updated_at' => now()],
+        ];
+
+        DB::table('board_columns')->insert($boardColumns);
+
+        // Insert board column tasks
+        $boardColumnTasks = [];
+        $indexGap = 60000;
+        foreach (range(1, 10) as $taskId) {
+            $boardColumnTasks[] = [
+                'index' => $indexGap * $taskId,
+                'board_column_id' => rand(1, 3),
+                'task_id' => $taskId,
+                'created_at' => now(),
+                'updated_at' => now(),
+            ];
+        }
+        DB::table('board_column_tasks')->insert($boardColumnTasks);
     }
 
     /**
@@ -75,11 +117,11 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('task_types');
-        Schema::dropIfExists('task_statuses');
+        Schema::dropIfExists('board_column_tasks');
+        Schema::dropIfExists('board_columns');
         Schema::dropIfExists('tasks');
         Schema::dropIfExists('boards');
-        Schema::dropIfExists('board_columns');
-        Schema::dropIfExists('board_column_tasks');
+        Schema::dropIfExists('task_types');
+        Schema::dropIfExists('task_statuses');
     }
 };
