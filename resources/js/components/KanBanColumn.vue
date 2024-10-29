@@ -1,10 +1,10 @@
 <template>
   <div class="kanban-column flex-1 mx-3"
-    :style="{ background: background, color: 'white', maxWidth: '20%', maxHeight: '50rem' }">
+    :style="{ background: background, color: 'white', maxWidth: '20%', minHeight: '100px', height: 'auto' }">
     <div class="kanban-column-header">
       <h2 class="font-bold">{{ name }}</h2>
     </div>
-    <div class="px-4">
+    <div class="px-4 flex-1 overflow-y-auto">
       <Draggable
       :list="tasks"
       group="tasks"
@@ -74,7 +74,6 @@ const onChange = (e) => {
     .then((response) => {
 
     });
-  console.log(e);
 }
 
 </script>

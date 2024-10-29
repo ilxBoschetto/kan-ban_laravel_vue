@@ -1,5 +1,5 @@
 <template>
-  <div class="rounded bg-white p-2 my-3" :style="{color:'black', border: '0.2rem solid ' + getStatusColor(task_status_id),}">
+  <div class="kanban-card":style="{color:'black', border: '0.2rem solid ' + getStatusColor(task_status_id), height: 'auto'}">
     <div class="flex items-center gap-2 pb-2">
         <font-awesome-icon
         :icon="getIconClass(task_type_id)"
@@ -7,10 +7,10 @@
         >
         </font-awesome-icon>
         <div class="fw-bold">
-            {{ id }}
+            {{ name }}
         </div>
     </div>
-        <div class="">
+        <div class="task-description">
             {{ name }}
         </div>
     </div>
@@ -47,15 +47,14 @@ const getStatusColor = (task_status_id) => {
 </script>
 
 <style scoped>
-.drag > div{
-    transform: rotate(5deg);
-}
 
+.task-description{
+    color: rgb(81, 81, 81)
+}
 .ghost{
     opacity:0.4;
     
 }
-
 
 .ghost > div{
     visibility: hidden;
