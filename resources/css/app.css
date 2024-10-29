@@ -1,0 +1,21 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+@import '~bootstrap/dist/css/bootstrap.min.css';
+
+body{
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    font-family: sans-serif;
+}
+.kanban-column{
+    border-radius: 1rem;
+}
+.kanban-column-header{
+    border-radius: 1rem 1rem 0 0;
+    padding: 1rem;
+}
+.kanban-column-header * {
+    margin: 0;
+}
