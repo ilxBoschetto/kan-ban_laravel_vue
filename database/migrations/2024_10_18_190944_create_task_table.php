@@ -29,6 +29,7 @@ return new class extends Migration
         Schema::create('tasks', function (Blueprint $table) {
             $table->id();
             $table->string('name');
+            $table->string('description');
             $table->foreignId('task_type_id')->constrained('task_types')->onDelete('cascade');
             $table->foreignId('task_status_id')->constrained('task_statuses')->onDelete('cascade');
             $table->timestamps();
@@ -81,6 +82,7 @@ return new class extends Migration
         for ($i = 1; $i <= 10; $i++) {
             DB::table('tasks')->insert([
                 'name' => 'Task ' . $i,
+                'description' => 'Description ' . $i,
                 'task_type_id' => $taskTypeIds->random(),
                 'task_status_id' => $taskStatusIds->random(),
                 'created_at' => now(),

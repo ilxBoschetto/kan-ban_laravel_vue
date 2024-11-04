@@ -11,16 +11,17 @@
         </div>
     </div>
         <div class="task-description">
-            {{ name }}
+            {{ description }}
         </div>
     </div>
 </template>
 
 <script setup>
-import { defineProps, ref, onMounted, inject } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 const props = defineProps({
     id: Number,
     name: String,
+    description: String,
     task_type_id: Number,
     task_status_id: Number,
 });

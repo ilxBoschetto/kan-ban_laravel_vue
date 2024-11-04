@@ -9,10 +9,14 @@
       :name="column.name"
       :background="column.background"
       :tasks="column.tasks"
+      @columnAdded="addColumn"
+      @columnDeleted="deleteColumn"
       >
       </KanbanColumn>
     </div>
   </div>
+
+  
 </template>
 
 <script setup>
@@ -38,10 +42,20 @@ const initKanBan = () => {
     .then((response) => {
       board.value = response.data;
       columns.value = response.data.columns;
+      console.log(columns.value);
     });
 };
 
 const taskTypes = ref([]);
+const addColumn = (newColumn) => {
+  columns.value.push(newColumn);
+  console.log(newColumn);
+  initKanBan();
+};
+const deleteColumn = (columnId) => {
+    columns.value = columns.value.filter(column => column.id !== columnId);
+    initKanBan();
+  };
 
 const getTaskTypes = () => {
   axios.get('/api/tasktypes')

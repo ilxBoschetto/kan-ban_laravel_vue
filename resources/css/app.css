@@ -1,7 +1,7 @@
+@import 'bootstrap/dist/css/bootstrap.min.css';
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
-@import '~bootstrap/dist/css/bootstrap.min.css';
 
 body{
     box-sizing: border-box;
@@ -37,4 +37,19 @@ body{
     padding: 15px;
     width: 100%;
     transition: all 0.3s ease;
+}
+.column-option-container {
+    font-size: 20px;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 0.4s ease, visibility 0s 0.4s;
+}
+.column-option-container:hover{
+    opacity: 0;
+    transition: opacity 0.4s, visibility 0.4s;
+}
+.kanban-column:hover .column-option-container {
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 0.4s ease;
 }

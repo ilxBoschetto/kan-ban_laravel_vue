@@ -9,6 +9,8 @@ class BoardColumn extends Model
 {
     use HasFactory;
 
+    protected $fillable = ['name', 'background', 'index', 'board_id'];
+
     protected $guarded = [];
 
     public function board()

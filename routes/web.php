@@ -17,4 +17,6 @@ Route::get('/api/kanban', [BoardColumnTaskController::class, 'index']);
 Route::get('/api/tasktypes', [TaskTypeController::class, 'index']);
 Route::get('/api/taskstatuses', [TaskStatusController::class, 'index']);
 Route::put('/api/updateTaskIndex', [BoardColumnTaskController::class, 'updateTaskIndex']);
+Route::post('/api/column', [BoardColumnController::class, 'create']);
+Route::delete('/api/column/{id}', [BoardColumnController::class, 'delete']);
 Route::get('{view}', KanBan::class)->where('view', '(.*)');
