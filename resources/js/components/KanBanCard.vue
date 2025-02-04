@@ -6,7 +6,7 @@
         :style="{ backgroundColor: getIconColor(task_type_id), padding: '0.4rem', borderRadius: '20%' }"
         >
         </font-awesome-icon>
-        <div class="fw-bold">
+        <div class="font-weight-bold">
             {{ name }}
         </div>
     </div>
@@ -17,7 +17,12 @@
 </template>
 
 <script setup>
+// Import
 import { ref, onMounted, inject } from 'vue';
+
+// Define Variables
+
+// Define Props
 const props = defineProps({
     id: Number,
     name: String,
@@ -30,6 +35,7 @@ const props = defineProps({
 const taskTypes = inject('taskTypes');
 const taskStatuses = inject('taskStatuses');
 
+// functions
 const getIconClass = (task_type_id) => {
     const taskType = taskTypes.value.find(type => type.id == task_type_id);
     return taskType ? ['fas', taskType.icon] : ['fas', 'question'];
@@ -54,12 +60,11 @@ const getStatusColor = (task_status_id) => {
 }
 .ghost{
     opacity:0.4;
-    
+    border-color: white !important;
 }
 
 .ghost > div{
     visibility: hidden;
-    transform: scale(1.05);
     transition: transform 0.1s ease, box-shadow 0.1s ease;
 }
 

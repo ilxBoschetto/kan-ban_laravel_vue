@@ -1,13 +1,12 @@
 <template>
   <div class="kanban-column flex-1 mx-3"
-    :style="{ background: background, color: 'white', maxWidth: '20%', minHeight: '100px', height: 'auto' }">
+    :style="{ background: background, color: 'white', maxWidth: '20%', minHeight: '100px', height: 'min-content' }">
     <div class="kanban-column-header row">
       <div class="col">
-
         <h2 class="font-bold">{{ name }}</h2>
       </div>
       <div class="column-option-container col-sm-3 d-flex justify-content-end align-items-center gap-2">
-        <button @click="openModal" type="button" class="text-white rounded">
+        <button @click="editColumn" type="button" class="text-white rounded">
           <font-awesome-icon :icon="['fas', 'pen']" :style="{ color: 'white' }" />
         </button>
         <button @click="deleteColumn(id)" type="button">
@@ -17,11 +16,13 @@
           >
           </font-awesome-icon>
         </button>
-        
       </div>
-      
     </div>
-    <div class="px-4 flex-1 overflow-y-auto">
+    <hr style="border-bottom:rgb(150, 150, 150) solid 0.1rem; margin: 0 2rem 0 2rem">
+    <div
+      class="cards-container"
+      v-bind:style="{ minHeight: tasks.length > 0 ? 'auto' : '0' }"
+    >
       <Draggable
       :list="tasks"
       group="tasks"
@@ -39,48 +40,14 @@
       </Draggable>
     </div>
   </div>
-  <div id="editColumnModal" class="modal fade" tabindex="-1" aria-hidden="true">
-  <div class="modal-dialog">
-    <div class="modal-content">
-      <!-- Modal Header -->
-      <div class="modal-header">
-        <h5 class="modal-title">Edit Column</h5>
-        <button type="button" class="btn-close" @click="closeModal"></button>
-      </div>
-
-      <!-- Modal Body -->
-      <div class="modal-body">
-        <Form ref="form" @submit="handleSubmit" :validation-schema="schema" v-slot="{ errors }">
-          <div class="mb-3">
-            <label for="name" class="form-label">Column Name:</label>
-            <Field name="name" :class="{ 'is-invalid': errors.name }" type="text" class="form-control" id="name" />
-            <ErrorMessage name="name" class="text-danger" />
-          </div>
-          <div class="mb-3">
-            <label for="background_color" :class="{ 'is-invalid': errors.background_color }" class="form-label">Background Color:</label>
-            <Field name="background_color" type="color" class="form-control form-control-color" id="background_color" />
-            <ErrorMessage name="background_color" class="text-danger" />
-          </div>
-          <!-- Modal Footer -->
-            <div class="modal-footer">
-              <button type="button" class="btn btn-secondary" @click="closeModal">Cancel</button>
-              <button type="submit" class="btn btn-primary">Save</button>
-            </div>
-        </Form>
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
+  
 
 </template>
 
 <script setup>
+// Import
 import KanBanCard from './KanBanCard.vue';
-import { inject, watch, ref, defineEmits } from 'vue';
+import { inject, watch, ref, defineEmits, nextTick } from 'vue';
 import Draggable from 'vuedraggable';
 import { Form, Field, ErrorMessage  } from 'vee-validate';
 import 'bootstrap';
@@ -88,8 +55,11 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import * as yup from 'yup';
 import axios from 'axios';
 
-const emit = defineEmits(['columnAdded', 'columnDeleted']);
+// Define Variables
+const emit = defineEmits(['columnAdded', 'columnDeleted', 'editColumn']);
 const form = ref(null);
+const formValues = ref({});
+
 const schema = yup.object({
   name: yup.string().required(),
   background_color: yup.string(),
@@ -99,7 +69,7 @@ const formData = ref({
   background_color: '#ffffff',
 });
 
-
+// Define Props
 const props = defineProps({
   id: Number,
   name: {
@@ -113,6 +83,8 @@ const props = defineProps({
   tasks: Array,
 });
 const tasks = props.tasks;
+
+// Listen Events
 watch(() => props.tasks, (newTask) => tasks.value = newTask);
 
 const onChange = (e) => {
@@ -128,6 +100,7 @@ const onChange = (e) => {
   let task = tasks[index];
   let position = task.pivot.index;
 
+  // create new position
   if(prevTask && nextTask){
     position = (prevTask.pivot.index + nextTask.pivot.index) / 2;
   } else if (prevTask){
@@ -136,6 +109,7 @@ const onChange = (e) => {
     position = nextTask.pivot.index / 2;
   }
 
+  // axios call
   axios.put('/api/updateTaskIndex', {
       params:{
         index: position,
@@ -148,15 +122,10 @@ const onChange = (e) => {
     });
 };
 
-const handleSubmit = (values) => {
-  
-  axios.post('/api/column', values)
-    .then((response) => {
-      emit('columnAdded', response.data);
-      form.value.resetForm();
-    });
-  $('#editColumnModal').modal('hide');
-};
+// Functions
+function editColumn() {
+  emit('editColumn', { id: props.id, name: props.name, background: props.background });
+}
 
 const deleteColumn = () => {
   axios.delete('/api/column/' + props.id)
@@ -164,10 +133,6 @@ const deleteColumn = () => {
       emit('columnDeleted', props.id);
       form.value.resetForm();
     });
-};
-
-const openModal = () => {
-  $('#editColumnModal').modal('show');
 };
 
 </script>

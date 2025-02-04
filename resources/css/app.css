@@ -4,20 +4,38 @@
 @tailwind utilities;
 
 body{
-    box-sizing: border-box;
     margin: 0;
     padding: 0;
     font-family: sans-serif !important;
+    height: 100%;
 }
 .kanban-column {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 10px;
     background: #000000;
     border-radius: 5px;
-    overflow: hidden;
-  }
+    overflow: visible;
+    min-height: min-content;
+}
+.kanban-add-column {
+    display: flex;
+    color: #000000;
+    border-radius: 5px;
+    border:#000000 0.15rem dashed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.kanban-add-column:hover{
+    border-color:#ffffff;
+    color: #ffffff;
+    cursor: pointer;
+}
+.cards-container{
+padding: 1rem;
+flex-grow: 1;
+}
 .kanban-column-header{
     border-radius: 1rem 1rem 0 0;
     padding: 1rem;
@@ -28,9 +46,9 @@ body{
 .kanban-container {
     display: flex;
     flex-wrap: nowrap;
+    align-items: flex-start;
 }
 .kanban-card {
-    color:black;
     background: white;
     margin: 10px 0;
     border-radius: 10px;

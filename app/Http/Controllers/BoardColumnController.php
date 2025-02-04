@@ -22,7 +22,7 @@ class BoardColumnController extends Controller
         $latestIndex = $lastedColumn ? $lastedColumn->index + self::COLUMN_GAP : self::COLUMN_GAP;
         $column = BoardColumn::create([
             'name' => \request()->name,
-            'background' => \request()->background_color ?? '#oooooo',
+            'background' => \request()->background_color ?? '#000000',
             'index' => $latestIndex,
             'board_id' => 1,
         ]);
