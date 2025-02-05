@@ -66,6 +66,7 @@ function closeModal() {
 function saveChanges(updatedColumn) {
   const index = columns.value.findIndex(col => col.id === updatedColumn.id);
   if (index !== -1) {
+    updateColumn(updatedColumn);
     columns.value[index] = { ...updatedColumn }; // Aggiorna la colonna
   }else{
     addColumn(updatedColumn);
@@ -86,8 +87,8 @@ const initKanBan = () => {
 };
 
 const taskTypes = ref([]);
+
 const addColumn = (newColumn) => {
-  
   axios.post('/api/column', {
     name: newColumn.name,
     background_color: newColumn.background,
@@ -97,10 +98,21 @@ const addColumn = (newColumn) => {
       initKanBan();
     });
 };
+
 const deleteColumn = (columnId) => {
     columns.value = columns.value.filter(column => column.id !== columnId);
     initKanBan();
   };
+
+const updateColumn = (column) => {
+  axios.put('/api/column/' + column.id, {
+    name: column.name,
+    background_color: column.background,
+  })
+    .then((response) => {
+
+    });
+};
 
 const getTaskTypes = () => {
   axios.get('/api/tasktypes')

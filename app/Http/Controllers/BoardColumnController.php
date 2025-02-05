@@ -36,4 +36,12 @@ class BoardColumnController extends Controller
         $column->delete();
         return 200;
     }
+
+    public function update($id)
+    {
+        return BoardColumn::findOrFail($id)->update([
+            'name' => \request()->name,
+            'background' => \request()->background_color ?? '#000000',
+        ]);
+    }
 }
