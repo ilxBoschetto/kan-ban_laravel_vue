@@ -14,7 +14,7 @@
           @columnDeleted="deleteColumn"
           >
           </KanbanColumn>
-          <div class="kanban-add-column flex-1 mx-3" @click="openModal"
+          <div class="kanban-add-column flex-1 mx-3" @click="openEditModal()"
             :style="{ background: board.background, maxWidth: '20%', height: '100px' }">
             <font-awesome-icon
               :icon="['fas', 'plus']">
@@ -49,8 +49,13 @@ const board = ref({
 const isModalOpen = ref(false);
 const currentColumn = ref({ id: null, name: '', background: '' });
 
-function openEditModal(columnData) {
-  currentColumn.value = { ...columnData }; // Clona i dati della colonna
+function openEditModal(column = null) {
+  currentColumn.value = column
+    ? { ...column }  // Clona i dati se stiamo modificando
+    : { id: -1, name: '', background: '#ffffff', tasks: [] }; // Nuova colonna
+
+    console.log(currentColumn.value);
+
   isModalOpen.value = true;
 }
 
@@ -62,6 +67,8 @@ function saveChanges(updatedColumn) {
   const index = columns.value.findIndex(col => col.id === updatedColumn.id);
   if (index !== -1) {
     columns.value[index] = { ...updatedColumn }; // Aggiorna la colonna
+  }else{
+    addColumn(updatedColumn);
   }
   closeModal();
 }
@@ -80,8 +87,15 @@ const initKanBan = () => {
 
 const taskTypes = ref([]);
 const addColumn = (newColumn) => {
-  columns.value.push(newColumn);
-  initKanBan();
+  
+  axios.post('/api/column', {
+    name: newColumn.name,
+    background_color: newColumn.background,
+  })
+    .then((response) => {
+      columns.value.push(newColumn);
+      initKanBan();
+    });
 };
 const deleteColumn = (columnId) => {
     columns.value = columns.value.filter(column => column.id !== columnId);
