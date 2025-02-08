@@ -1,62 +1,84 @@
 <template>
-    <div>
-      
-      <div class="flex justify-start p-3" :style="{ background: board.background, height: '100%' }">
-        <KanbanColumn
-          v-for="column in columns"
-          :key="column.id"
-          :id="column.id"
-          :name="column.name"
-          :background="column.background"
-          :tasks="column.tasks"
-          @editColumn="openEditModal"
-          @columnAdded="addColumn"
-          @columnDeleted="deleteColumn"
-          >
-          </KanbanColumn>
-          <div class="kanban-add-column flex-1 mx-3" @click="openEditModal()"
-            :style="{ background: board.background, maxWidth: '20%', height: '100px' }">
-            <font-awesome-icon
-              :icon="['fas', 'plus']">
-              </font-awesome-icon>
-          </div>
-        </div>
-        <!-- Modale per Editare Colonna -->
-        <EditColumnModal
-          v-if="isModalOpen"
-          :column="currentColumn"
-          @close="closeModal"
-          @save="saveChanges"
-        />
+  <div>
+
+    <div class="flex justify-start p-3" :style="{ background: board.background, height: '100%' }">
+      <KanbanColumn v-for="column in columns" :key="column.id" :id="column.id" :name="column.name"
+        :background="column.background" :tasks="column.tasks" @addTask="openAddTaskModal"
+        @editColumn="openEditColumnModal" @columnAdded="addColumn" @columnDeleted="deleteColumn">
+      </KanbanColumn>
+      <div class="kanban-add-column flex-1 mx-3" @click="openEditColumnModal()"
+        :style="{ background: board.background, maxWidth: '20%', height: '100px' }">
+        <font-awesome-icon :icon="['fas', 'plus']">
+        </font-awesome-icon>
+      </div>
     </div>
+    <!-- Modale per Editare Colonna -->
+    <EditColumnModal v-if="isModalOpen" :column="currentColumn" @close="closeModal" @save="saveChanges" />
+    <EditTaskModal v-if="isTaskModalOpen" :column="currentColumn" :task="currentTask" :taskTypes="taskTypes"
+      :taskStatuses="taskStatuses" @closeTaskModal="closeTaskModal" @saveTask="saveTask" />
+  </div>
 </template>
 
 <script setup>
+/**
+ * Imports
+ */
 import { ref, onMounted, provide, nextTick } from 'vue';
 import KanbanColumn from './KanbanColumn.vue';
 import EditColumnModal from './EditColumnModal.vue';
 import axios from 'axios';
+import EditTaskModal from './EditTaskModal.vue';
 
+/**
+ * Variables
+ */
 const boardId = 1;
 const columns = ref([]);
 const tasks = ref([]);
-
+const isModalOpen = ref(false);
+const isTaskModalOpen = ref(false);
+const taskTypes = ref([]);
+const taskStatuses = ref([]);
+const currentColumn = ref({
+  id: null,
+  name: '',
+  background: ''
+});
+const currentTask = ref({
+  id: null,
+  name: ''
+});
 const board = ref({
   name: '',
   background: '#ffffff'
 });
 
-const isModalOpen = ref(false);
-const currentColumn = ref({ id: null, name: '', background: '' });
+onMounted(() => {
+  initKanBan();
+  getTaskTypes();
+  getTaskStatuses();
+})
 
-function openEditModal(column = null) {
+/**
+ * Functions
+ */
+function openEditColumnModal(column = null) {
   currentColumn.value = column
     ? { ...column }  // Clona i dati se stiamo modificando
     : { id: -1, name: '', background: '#ffffff', tasks: [] }; // Nuova colonna
 
-    console.log(currentColumn.value);
-
   isModalOpen.value = true;
+}
+
+function openAddTaskModal(column, task = null) {
+  currentTask.value = task
+    ? { ...task }  // Clona i dati se stiamo modificando
+    : { id: -1, name: '', column_id: column.id }; // Nuova task
+  isTaskModalOpen.value = true;
+}
+
+function closeTaskModal() {
+  isTaskModalOpen.value = false;
 }
 
 function closeModal() {
@@ -67,11 +89,20 @@ function saveChanges(updatedColumn) {
   const index = columns.value.findIndex(col => col.id === updatedColumn.id);
   if (index !== -1) {
     updateColumn(updatedColumn);
-    columns.value[index] = { ...updatedColumn }; // Aggiorna la colonna
-  }else{
+  } else {
     addColumn(updatedColumn);
   }
   closeModal();
+}
+
+function saveTask(task) {
+  const index = tasks.value.findIndex(task => task.id === task.id);
+  if (index !== -1) {
+    updateTask(task);
+  } else {
+    addTask(task);
+  }
+  closeTaskModal();
 }
 
 const initKanBan = () => {
@@ -86,33 +117,65 @@ const initKanBan = () => {
     });
 };
 
-const taskTypes = ref([]);
-
 const addColumn = (newColumn) => {
   axios.post('/api/column', {
     name: newColumn.name,
     background_color: newColumn.background,
   })
     .then((response) => {
-      columns.value.push(newColumn);
+      columns.value.push(response.data);
       initKanBan();
     });
 };
 
-const deleteColumn = (columnId) => {
-    columns.value = columns.value.filter(column => column.id !== columnId);
-    initKanBan();
-  };
-
 const updateColumn = (column) => {
+  const index = columns.value.findIndex(col => col.id === column.id);
   axios.put('/api/column/' + column.id, {
     name: column.name,
     background_color: column.background,
   })
     .then((response) => {
-
+      columns.value[index] = { ...column }; // Aggiorna la colonna
     });
 };
+
+const deleteColumn = (columnId) => {
+  columns.value = columns.value.filter(column => column.id !== columnId);
+  initKanBan();
+};
+
+const addTask = (task) => {
+  axios.post('/api/task', {
+    name: task.task.name,
+    description: task.task.description ?? '',
+    column_id: task.column_id,
+    task_type_id: task.task_type_id,
+    task_status_id: task.task_status_id
+  })
+    .then((response) => {
+      const columnId = response.data.pivot.board_column_id;
+      const column = columns.value.find(col => col.id === columnId);
+      if (column) {
+        const newTask = { ...response.data };
+        column.tasks.splice(0, 0, newTask);
+      }
+    });
+};
+
+const updateTask = (task) => {
+  // TODO
+  /*
+  axios.put('/api/task/' + task.id, {
+    name: task.name,
+    description: task.description,
+    task_type_id: task.task_type_id,
+    task_status_id: task.task_status_id
+  })
+    .then((response) => {
+      tasks.value[index] = { ...task }; // Aggiorna la task
+    });
+    */
+}
 
 const getTaskTypes = () => {
   axios.get('/api/tasktypes')
@@ -120,8 +183,6 @@ const getTaskTypes = () => {
       taskTypes.value = response.data;
     });
 };
-
-const taskStatuses = ref([]);
 
 const getTaskStatuses = () => {
   axios.get('/api/taskstatuses')
@@ -133,11 +194,5 @@ const getTaskStatuses = () => {
 // provide taskType to children
 provide('taskTypes', taskTypes);
 provide('taskStatuses', taskStatuses);
-
-onMounted(() => {
-  initKanBan();
-  getTaskTypes();
-  getTaskStatuses();
-})
 
 </script>

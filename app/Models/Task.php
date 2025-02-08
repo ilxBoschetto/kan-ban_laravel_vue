@@ -7,6 +7,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 
 class Task extends Model
 {
+
+    public const INDEX_GAP = 6000;
+
     use HasFactory;
 
     protected $guarded = [];
