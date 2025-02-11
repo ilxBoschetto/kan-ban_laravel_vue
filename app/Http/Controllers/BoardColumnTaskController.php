@@ -73,4 +73,8 @@ class BoardColumnTaskController extends Controller
         return $task;
     }
 
+    public function getAllTasks(){
+        return Task::all();
+    }
+
 }

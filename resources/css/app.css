@@ -3,18 +3,32 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+    --custom-primary: #02466d;
+    --custom-secondary: #dadadc;
+    --custom-accent: #7d0225;
+    --custom-light: #f3f2f2;
+}
+
 body {
     margin: 0;
     padding: 0;
     font-family: sans-serif !important;
-    height: 100%;
+    max-height: 100% !important;
+    box-sizing: border-box;
+    overflow-y: hidden;
+    color: var(--custom-secondary);
+    background: var(--custom-primary) !important;
+}
+
+.content-wrapper{
+    padding: 1rem;
 }
 
 .kanban-column {
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
-    background: #000000;
     border-radius: 5px;
     overflow: visible;
     min-height: min-content;
@@ -22,17 +36,15 @@ body {
 
 .kanban-add-column {
     display: flex;
-    color: #000000;
+    color: var(--custom-secondary);
     border-radius: 5px;
-    border: #000000 0.15rem dashed;
+    border: var(--custom-secondary) 0.15rem dashed;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .kanban-add-column:hover {
-    border-color: #ffffff;
-    color: #ffffff;
     cursor: pointer;
 }
 
@@ -57,7 +69,7 @@ body {
 }
 
 .kanban-card {
-    background: white;
+    background: var(--custom-light);
     margin: 10px 0;
     border-radius: 10px;
     padding: 15px;
@@ -95,4 +107,23 @@ body {
 
 .dropdown-menu.show {
     display: block;
+}
+
+.loader-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.loader-icon {
+    font-size: 5rem;
+    color: var(--custom-accent);
+    z-index: 10000;
+}
+.kanban-dashboard-container{
+    background: var(--custom-secondary);
+    border-radius: 0.5rem;
+    padding: 2rem 2rem;
+    max-height: 50rem;
 }

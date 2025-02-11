@@ -1,5 +1,5 @@
 <template>
-  <div class="kanban-column flex-1 mx-3" :style="{
+  <div class="kanban-column flex-1 mx-2" :style="{
     background: background,
     color: isLightColor(props.background) ? '#323333' : 'white',
     maxWidth: '20%',

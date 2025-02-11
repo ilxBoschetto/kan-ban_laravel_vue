@@ -12,6 +12,7 @@ import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome';
 import { fas } from '@fortawesome/free-solid-svg-icons';
 import { far } from '@fortawesome/free-regular-svg-icons';
 import { library } from '@fortawesome/fontawesome-svg-core';
+import NavMenu from './components/NavMenu.vue';
 import axios from 'axios';
 
 library.add(fas, far);
@@ -22,6 +23,7 @@ const router = createRouter({
     history: createWebHistory(),
 });
 app.component('font-awesome-icon', FontAwesomeIcon);
+app.component('nav-menu', NavMenu);
 app.use(router);
 
 app.mount('#app');

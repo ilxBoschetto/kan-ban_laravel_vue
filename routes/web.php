@@ -32,6 +32,7 @@ Route::delete('/api/column/{id}', [BoardColumnController::class, 'delete']);
 /**
  * Tasks
  */
+Route::get('/api/alltasks', [BoardColumnTaskController::class, 'getAllTasks']);
 Route::post('/api/task', [BoardColumnTaskController::class, 'create']);
 Route::put('/api/task/{id}', [BoardColumnTaskController::class, 'update']);
 Route::delete('/api/task/{id}', [BoardColumnTaskController::class, 'delete']);
