@@ -31,8 +31,14 @@
       <Draggable :list="tasks" group="tasks" item-key="id" tag="div" drag-class="drag" ghost-class="ghost"
         @change="onChange">
         <template #item="{ element }">
-          <KanBanCard :id="element.id" :name="element.name" :task_type_id="element.task_type_id"
-            :task_status_id="element.task_status_id" :description="element.description">
+          <KanBanCard
+          :id="element.id"
+          :name="element.name"
+          :task_type_id="element.task_type_id"
+          :task_status_id="element.task_status_id"
+          :description="element.description"
+          :task_priority_id="element.task_priority_id"
+          >
           </KanBanCard>
         </template>
       </Draggable>
@@ -47,9 +53,6 @@
 import KanBanCard from './KanBanCard.vue';
 import { inject, watch, ref, defineEmits } from 'vue';
 import Draggable from 'vuedraggable';
-import 'bootstrap';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import * as yup from 'yup';
 import axios from 'axios';
 
 // Define Variables
@@ -79,7 +82,6 @@ const onChange = (e) => {
     return;
 
   let taskId = item.element.id;
-  console.log(tasks);
   let index = tasks.findIndex(task => task.id == taskId);
   let prevTask = index > 0 ? tasks[index - 1] : null;
   let nextTask = index < tasks.length - 1 ? tasks[index + 1] : null;

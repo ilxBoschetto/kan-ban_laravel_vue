@@ -2,15 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\TaskPriority;
 use App\Http\Controllers\Controller;
-use App\Models\TaskStatus;
 use Illuminate\Http\Request;
 
-class TaskStatusController extends Controller
+class TaskPriorityController extends Controller
 {
     public function index()
     {
-        $statuses = TaskStatus::all();
-        return $statuses;
+        $priorities = TaskPriority::all();
+        return $priorities;
     }
 }

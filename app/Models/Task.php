@@ -26,6 +26,11 @@ class Task extends Model
         return $this->belongsTo(TaskStatus::class);
     }
 
+    public function taskPriority()
+    {
+        return $this->belongsTo(TaskPriority::class);
+    }
+
     // A task can belong to multiple board columns through pivot table
     public function boardColumns()
     {

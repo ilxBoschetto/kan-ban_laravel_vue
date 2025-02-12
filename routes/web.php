@@ -5,6 +5,7 @@ use App\Models\KanBan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BoardColumnTaskController;
 use App\Http\Controllers\TaskStatusController;
+use App\Http\Controllers\TaskPriorityController;
 use App\Http\Controllers\BoardColumnController;
 use App\Http\Controllers\BoardController;
 
@@ -20,6 +21,7 @@ Route::get('/api/kanban', [BoardColumnTaskController::class, 'index']);
  */
 Route::get('/api/tasktypes', [TaskTypeController::class, 'index']);
 Route::get('/api/taskstatuses', [TaskStatusController::class, 'index']);
+Route::get('/api/taskpriorities', [TaskPriorityController::class, 'index']);
 
 
 /**

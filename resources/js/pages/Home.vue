@@ -37,36 +37,64 @@
             </div>
         </div>
       </div>
-      <div class="row mb-2">
-        <div v-for="taskTypes in taskTypes" :key="taskTypes.id" class="col-md-4">
+      <div class="row mb-4">
+        <div v-for="taskType in taskTypes" :key="taskType.id" class="col-md-4">
             <div :class="{
-            'text-dark': isLightColor(taskTypes.background_color),
-            'text-white': !isLightColor(taskTypes.background_color)
-            }" :style="{ background: taskTypes.background_color, borderRadius: '0.2rem', border: '0.1rem solid silver' }">
+            'text-dark': isLightColor(taskType.background_color),
+            'text-white': !isLightColor(taskType.background_color)
+            }" :style="{ background: taskType.background_color, borderRadius: '0.2rem', border: '0.1rem solid silver' }">
             <div class="position-absolute top-0 end-4 p-2"
                 :class="{
-                    'text-dark': isLightColor(taskTypes.background_color),
-                    'text-white': !isLightColor(taskTypes.background_color)
+                    'text-dark': isLightColor(taskType.background_color),
+                    'text-white': !isLightColor(taskType.background_color)
                 }"
                 style="font-size: 1.2rem">
-                ({{ ((tasks.filter(task => task.task_type_id === taskTypes.id).length / tasks.length) * 100).toFixed(2) }}%)
+                ({{ ((tasks.filter(task => task.task_type_id === taskType.id).length / tasks.length) * 100).toFixed(2) }}%)
             </div>
             <div class="card-body">
                 <h5 class="card-title">
                     
-                    {{ taskTypes.name }}</h5>
+                    {{ taskType.name }}</h5>
                 <p class="card-text display-4">
                     <font-awesome-icon
-                        :icon="getIconClass(taskTypes.id)"
+                        :icon="getIconClass(taskType.id)"
                         
-                        :style="{ color: getIconColor(taskTypes.id), padding: '0.4rem', borderRadius: '10%', backgroundColor: isLightColor(taskTypes.background_color) ? '#323333' : 'white' }"
+                        :style="{ color: getIconColor(taskType.id), padding: '0.4rem', borderRadius: '10%', backgroundColor: isLightColor(taskType.background_color) ? '#323333' : 'white' }"
                     ></font-awesome-icon>
-                    {{ tasks.filter(task => task.task_type_id === taskTypes.id).length }}</p>
+                    {{ tasks.filter(task => task.task_type_id === taskType.id).length }}</p>
             </div>
             </div>
         </div>
         </div>
-
+        <div class="row mb-4">
+        <div v-for="taskPriority in taskPriorities" :key="taskPriority.id" class="col-md-4">
+            <div :class="{
+            'text-dark': isLightColor(taskPriority.background_color),
+            'text-white': !isLightColor(taskPriority.background_color)
+            }" :style="{ background: taskPriority.background_color, borderRadius: '0.2rem', border: '0.1rem solid silver' }">
+            <div class="position-absolute top-0 end-4 p-2"
+                :class="{
+                    'text-dark': isLightColor(taskPriority.background_color),
+                    'text-white': !isLightColor(taskPriority.background_color)
+                }"
+                style="font-size: 1.2rem">
+                ({{ ((tasks.filter(task => task.task_priority_id === taskPriority.id).length / tasks.length) * 100).toFixed(2) }}%)
+            </div>
+            <div class="card-body">
+                <h5 class="card-title">
+                    
+                    {{ taskPriority.name }}</h5>
+                <p class="card-text display-4">
+                    <font-awesome-icon
+                        :icon="getIconClassPriority(taskPriority.id)"
+                        
+                        :style="{ color: getIconColorPriority(taskPriority.id), padding: '0.4rem', borderRadius: '10%', backgroundColor: isLightColor(taskPriority.background_color) ? '#323333' : 'white' }"
+                    ></font-awesome-icon>
+                    {{ tasks.filter(task => task.task_type_id === taskPriority.id).length }}</p>
+            </div>
+            </div>
+        </div>
+        </div>
     </div>
   </template>
   
@@ -81,9 +109,10 @@ import axios from 'axios';
  */
 const boardId = 1;
 const columns = ref([]);
-const taskTypes = ref([]);
 const tasks = ref([]);
+const taskTypes = ref([]);
 const taskStatuses = ref([]);
+const taskPriorities = ref([]);
 
 /**
  * Functions
@@ -92,6 +121,7 @@ onMounted(() => {
   initKanBan();
   getTaskTypes();
   getTaskStatuses();
+  getTaskPriorities();
 })
 
 const initKanBan = () => {
@@ -143,6 +173,13 @@ const getTaskStatuses = () => {
     });
 };
 
+const getTaskPriorities = () => {
+  axios.get('/api/taskpriorities')
+    .then((response) => {
+      taskPriorities.value = response.data;
+    });
+}
+
 const getIconClass = (task_type_id) => {
     const taskType = taskTypes.value.find(type => type.id == task_type_id);
     return taskType ? ['fas', taskType.icon] : ['fas', 'question'];
@@ -151,6 +188,16 @@ const getIconClass = (task_type_id) => {
 const getIconColor = (task_type_id) => {
     const taskType = taskTypes.value.find(type => type.id == task_type_id);
     return taskType ? taskType.background_color : 'white';
+}
+
+const getIconClassPriority = (task_type_id) => {
+    const taskPriority = taskPriorities.value.find(type => type.id == task_type_id);
+    return taskPriority ? ['fas', taskPriority.icon] : ['fas', 'question'];
+};
+
+const getIconColorPriority = (task_type_id) => {
+    const taskPriority = taskPriorities.value.find(type => type.id == task_type_id);
+    return taskPriority ? taskPriority.background_color : 'white';
 }
 
 function isLightColor(hex) {

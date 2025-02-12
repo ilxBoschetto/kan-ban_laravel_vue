@@ -19,8 +19,16 @@
     <EditColumnModal v-if="isModalOpen" :column="currentColumn" @close="closeModal" @save="saveChanges" />
 
     <!-- Modale per Editare Task -->
-    <EditTaskModal v-if="isTaskModalOpen" :column="currentColumn" :task="currentTask" :taskTypes="taskTypes"
-      :taskStatuses="taskStatuses" @closeTaskModal="closeTaskModal" @saveTask="saveTask" />
+    <EditTaskModal
+      v-if="isTaskModalOpen"
+      :column="currentColumn"
+      :task="currentTask"
+      :taskTypes="taskTypes"
+      :taskStatuses="taskStatuses"
+      :taskPriorities="taskPriorities"
+      @closeTaskModal="closeTaskModal"
+      @saveTask="saveTask"
+    />
   </div>
 </template>
 
@@ -44,6 +52,7 @@ const isModalOpen = ref(false);
 const isTaskModalOpen = ref(false);
 const taskTypes = ref([]);
 const taskStatuses = ref([]);
+const taskPriorities = ref([]);
 const currentColumn = ref({
   id: null,
   name: '',
@@ -62,6 +71,7 @@ onMounted(() => {
   initKanBan();
   getTaskTypes();
   getTaskStatuses();
+  getTaskPriorities();
 })
 
 /**
@@ -166,7 +176,8 @@ const addTask = (task) => {
     description: task.task.description ?? '',
     column_id: task.column_id,
     task_type_id: task.task_type_id,
-    task_status_id: task.task_status_id
+    task_status_id: task.task_status_id,
+    task_priority_id: task.task_priority_id
   })
     .then((response) => {
       const columnId = response.data.pivot.board_column_id;
@@ -209,8 +220,16 @@ const getTaskStatuses = () => {
     });
 };
 
+const getTaskPriorities = () => {
+  axios.get('/api/taskpriorities')
+    .then((response) => {
+      taskPriorities.value = response.data;
+    });
+}
+
 // provide taskType to children
 provide('taskTypes', taskTypes);
 provide('taskStatuses', taskStatuses);
+provide('taskPriorities', taskPriorities);
 
 </script>

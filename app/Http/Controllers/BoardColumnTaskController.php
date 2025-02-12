@@ -18,7 +18,9 @@ class BoardColumnTaskController extends Controller
                     $query->orderBy('index'); // Order tasks by index
                 },
                 'columns.tasks.taskType',
-                'columns.tasks.taskStatus'])
+                'columns.tasks.taskStatus',
+                'columns.tasks.taskPriority'
+                ])
             ->findOrFail($boardId);
         return $board;
     }
@@ -44,6 +46,7 @@ class BoardColumnTaskController extends Controller
         $task->description = \request()->description ?? '';
         $task->task_type_id = \request()->task_type_id;
         $task->task_status_id = \request()->task_status_id;
+        $task->task_priority_id = \request()->task_priority_id;
         $task->save();
 
         $column = BoardColumn::findOrFail(\request()->column_id);
@@ -61,6 +64,7 @@ class BoardColumnTaskController extends Controller
         $task->load([
             'taskType',
             'taskStatus',
+            'taskPriority',
             'boardColumns' => function ($query) {
                 $query->withPivot('board_column_id', 'index', 'created_at', 'updated_at');
             }

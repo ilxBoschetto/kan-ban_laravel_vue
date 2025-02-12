@@ -27,7 +27,7 @@
               <div class="dropdown">
                 <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
                   @click="toggleTypeDropdown" @blur="closeTypeDropdown">
-                  <font-awesome-icon :icon="getIconClass(selectedTaskType)" class="me-2"
+                  <font-awesome-icon :icon="getIconClass(selectedTaskType, props.taskTypes)" class="me-2"
                     :style="getIconStyle(selectedTaskType, props.taskTypes)" />
                   {{ getTaskInfoName(selectedTaskType, props.taskTypes) }}
                 </button>
@@ -36,7 +36,7 @@
                   <li v-for="taskType in props.taskTypes" :key="taskType.id">
                     <a class="dropdown-item d-flex align-items-center" href="#"
                       @mousedown.prevent="selectTaskType(taskType.id)">
-                      <font-awesome-icon :icon="getIconClass(taskType.id)" class="me-2"
+                      <font-awesome-icon :icon="getIconClass(taskType.id, props.taskTypes)" class="me-2"
                         :style="getIconStyle(taskType.id, props.taskTypes)" />
                       {{ taskType.name }}
                     </a>
@@ -59,6 +59,28 @@
                       @mousedown.prevent="selectTaskStatus(taskStatus.id)">
                       <div class="me-2 p-2" :style="getIconStyle(taskStatus.id, props.taskStatuses)" />
                       {{ taskStatus.name }}
+                    </a>
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div class="mb-3">
+              <label for="dropdown" class="form-label">Task Priority:</label>
+              <div class="dropdown">
+                <button class="btn btn-light dropdown-toggle d-flex align-items-center" type="button"
+                  @click="togglePriorityDropdown" @blur="closePriorityDropdown">
+                  <font-awesome-icon :icon="getIconClass(selectedTaskPriority, taskPriorities)" class="me-2"
+                    :style="getIconStyle(selectedTaskPriority, props.taskPriorities)" />
+                  {{ getTaskInfoName(selectedTaskPriority, props.taskPriorities) }}
+                </button>
+
+                <ul class="dropdown-menu" :class="{ show: isPriorityDropdownOpen }">
+                  <li v-for="taskPriority in props.taskPriorities" :key="taskPriority.id">
+                    <a class="dropdown-item d-flex align-items-center" href="#"
+                      @mousedown.prevent="selectTaskPriority(taskPriority.id)">
+                      <font-awesome-icon :icon="getIconClass(taskPriority.id, props.taskPriorities)" class="me-2"
+                        :style="getIconStyle(taskPriority.id, props.taskPriorities)" />
+                      {{ taskPriority.name }}
                     </a>
                   </li>
                 </ul>
@@ -89,6 +111,7 @@ const props = defineProps({
   task: Object,
   taskTypes: Array,
   taskStatuses: Array,
+  taskPriorities: Array,
 });
 
 /**
@@ -105,8 +128,10 @@ const errorMessage = ref("");
 const inputBorder = ref("1px solid #ced4da"); // Default Bootstrap border
 const selectedTaskType = ref(props.taskTypes.length ? props.taskTypes[0].id : null);
 const selectedTaskStatus = ref(props.taskStatuses.length ? props.taskStatuses[0].id : null);
+const selectedTaskPriority = ref(props.taskPriorities.length ? props.taskPriorities[0].id : null);
 const isTypeDropdownOpen = ref(false);
 const isStatusDropdownOpen = ref(false);
+const isPriorityDropdownOpen = ref(false);
 let taskModalInstance = null;
 
 onMounted(() => {
@@ -138,6 +163,10 @@ const closeStatusDropdown = () => {
   setTimeout(() => isStatusDropdownOpen.value = false, 0); // Delay to allow click selection
 };
 
+const closePriorityDropdown = () => {
+  setTimeout(() => isPriorityDropdownOpen.value = false, 0); // Delay to allow click selection
+};
+
 const toggleTypeDropdown = () => {
   isTypeDropdownOpen.value = !isTypeDropdownOpen.value;
 };
@@ -146,14 +175,13 @@ const toggleStatusDropdown = () => {
   isStatusDropdownOpen.value = !isStatusDropdownOpen.value;
 };
 
+const togglePriorityDropdown = () => {
+  isPriorityDropdownOpen.value = !isPriorityDropdownOpen.value;
+};
+
 const selectTaskType = (task_type_id) => {
   selectedTaskType.value = task_type_id;
   isTypeDropdownOpen.value = false;
-};
-
-const getTaskInfoName = (task_type_id, taskInfos) => {
-  const taskInfo = taskInfos.find(type => type.id == task_type_id);
-  return taskInfo ? taskInfo.name : 'Unknown';
 };
 
 const selectTaskStatus = (task_status_id) => {
@@ -161,8 +189,18 @@ const selectTaskStatus = (task_status_id) => {
   isStatusDropdownOpen.value = false;
 };
 
-const getIconClass = (task_type_id) => {
-  const taskType = props.taskTypes.find(type => type.id == task_type_id);
+const selectTaskPriority = (task_priority_id) => {
+  selectedTaskPriority.value = task_priority_id;
+  isPriorityDropdownOpen.value = false;
+};
+
+const getTaskInfoName = (task_type_id, taskInfos) => {
+  const taskInfo = taskInfos.find(type => type.id == task_type_id);
+  return taskInfo ? taskInfo.name : 'Unknown';
+};
+
+const getIconClass = (task_type_id, taskInfo) => {
+  const taskType = taskInfo.find(type => type.id == task_type_id);
   return taskType ? ['fas', taskType.icon] : ['fas', 'question'];
 };
 
@@ -185,6 +223,7 @@ function saveTask() {
     column_id: task.value.column_id,
     task_type_id: selectedTaskType.value,
     task_status_id: selectedTaskStatus.value,
+    task_priority_id: selectedTaskPriority.value,
   });
   closeTaskModal();
 }

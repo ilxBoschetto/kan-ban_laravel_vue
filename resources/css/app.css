@@ -127,3 +127,8 @@ body {
     padding: 2rem 2rem;
     max-height: 50rem;
 }
+.kanban-user-container{
+    background: var(--custom-secondary);
+    border-radius: 0.5rem;
+    padding: 2rem 2rem;
+}
