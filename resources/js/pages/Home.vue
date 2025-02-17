@@ -90,7 +90,7 @@
                         
                         :style="{ color: getIconColorPriority(taskPriority.id), padding: '0.4rem', borderRadius: '10%', backgroundColor: isLightColor(taskPriority.background_color) ? '#323333' : 'white' }"
                     ></font-awesome-icon>
-                    {{ tasks.filter(task => task.task_type_id === taskPriority.id).length }}</p>
+                    {{ tasks.filter(task => task.task_priority_id === taskPriority.id).length }}</p>
             </div>
             </div>
         </div>

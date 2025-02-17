@@ -5,9 +5,9 @@
 
 :root {
     --custom-primary: #02466d;
-    --custom-secondary: #dadadc;
+    --custom-secondary: #e8e8e8;
     --custom-accent: #7d0225;
-    --custom-light: #f3f2f2;
+    --custom-light: #fcfbfb;
 }
 
 body {
@@ -131,4 +131,47 @@ body {
     background: var(--custom-secondary);
     border-radius: 0.5rem;
     padding: 2rem 2rem;
+}
+
+.nav-link.active .custom-nav-icon {
+    transform: 2rem;
+    color: var(--custom-accent);
+}
+
+.custom-navbar {
+    background: var(--custom-secondary);
+    padding: 0.2rem;
+    border-radius: 1rem;
+    max-width: 20rem;
+    margin: 0.5rem 1rem;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    gap: 1.5rem;
+}
+
+li {
+    display: flex;
+    align-items: center;
+}
+
+.nav-link {
+    color: var(--custom-primary);
+    transition: transform 0.2s, color 0.2s;
+}
+
+.nav-link:hover {
+    color: var(--custom-accent);
+    transform: scale(1.1);
+}
+.custom-nav-icon{
+    font-size:1.8rem;
+}
+
+.custom-sub-nav-icon{
+    font-size:1.3rem;
 }

@@ -17,22 +17,23 @@ export default [
     },
     {
         path: '/user',
-        name: 'user',
-        component: User,
-    },
-    {
-        path: '/user/user_home',
-        name: 'user_home',
-        component: UserHome,
-    },
-    {
-        path: '/user/user_settings',
-        name: 'user_settings',
-        component: UserSettings,
-    },
-    {
-        path: '/user/settings',
-        name: 'settings',
-        component: Settings,
+        component: User, // Layout principale per tutte le sottoroute
+        children: [
+            {
+                path: '',
+                name: 'user_default',
+                component: UserSettings, // Pagina predefinita (dashboard o home)
+            },
+            {
+                path: 'user_home',
+                name: 'user_home',
+                component: UserHome,
+            },
+            {
+                path: 'settings',
+                name: 'settings',
+                component: Settings,
+            },
+        ],
     },
 ];
