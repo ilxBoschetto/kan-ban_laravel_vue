@@ -13,7 +13,6 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-
 Route::get('/api/kanban', [BoardColumnTaskController::class, 'index']);
 
 /**
