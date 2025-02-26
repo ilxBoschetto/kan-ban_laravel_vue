@@ -43,6 +43,11 @@ return new class extends Migration
      */
     public function down(): void
     {
+        Schema::table('tasks', function (Blueprint $table) {
+            $table->dropForeign(['task_priority_id']);
+            $table->dropColumn('task_priority_id');
+        });
+    
         Schema::dropIfExists('task_priorities');
     }
 };

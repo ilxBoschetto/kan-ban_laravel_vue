@@ -36,4 +36,8 @@ export default [
             },
         ],
     },
+    {
+        path: '/:catchAll(.*)',
+        redirect: '/kanban',
+    },
 ];

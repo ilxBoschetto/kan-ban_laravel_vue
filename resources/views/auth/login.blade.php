@@ -8,12 +8,6 @@
     
     <title>{{ config('app.name', 'Laravel') }} - Login</title>
 
-    <!-- Favicon -->
-    <link rel="icon" href="{{ asset('favicon.ico') }}">
-
-    <!-- Bootstrap CSS -->
-    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.6.0/css/bootstrap.min.css" rel="stylesheet">
-
     <!-- CSRF Token -->
     <meta name="csrf-token" content="{{ csrf_token() }}">
 
@@ -26,7 +20,6 @@
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card shadow-lg p-4" style="max-width: 400px; width: 100%;">
             <h3 class="text-center mb-4">Login</h3>
-
             @if (session('status'))
                 <div class="alert alert-success">
                     {{ session('status') }}
@@ -47,9 +40,9 @@
                 @csrf
 
                 <div class="form-group">
-                    <label for="email">Email</label>
-                    <input type="email" id="email" name="email" class="form-control @error('email') is-invalid @enderror" value="{{ old('email') }}" required autofocus placeholder="Inserisci la tua email">
-                    @error('email')
+                    <label for="username">Username</label>
+                    <input type="text" id="username" name="username" class="form-control @error('username') is-invalid @enderror" value="{{ old('username') }}" required autofocus placeholder="Inserisci il tuo username">
+                    @error('username')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>

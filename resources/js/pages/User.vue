@@ -20,13 +20,14 @@
                     </router-link>
                 </li>
                 <li>
-                    <router-link to="/user/user_home" class="nav-link" active-class="active">
+                    <a href="#" class="nav-link" @click.prevent="logout">
                         <span>
-                            <font-awesome-icon :icon="['fas', 'poop']" class="custom-sub-nav-icon"></font-awesome-icon>
+                            <font-awesome-icon :icon="['fas', 'sign-out-alt']" class="custom-sub-nav-icon"></font-awesome-icon>
                         </span>
-                        <span class="ms-1">Stefanomerda</span>
-                    </router-link>
+                        <span class="ms-1">Logout</span>
+                    </a>
                 </li>
+
             </ul>
         </div>
 
@@ -36,7 +37,29 @@
         </div>
     </div>
 </template>
+
+<script setup>
+import { useRouter } from 'vue-router';
+import axios from 'axios';
+
+const router = useRouter();
+
+const logout = async () => {
+    try {
+        await axios.post('/logout');
+
+        localStorage.removeItem('token');
+
+        router.push('/login');
+        location.reload();
+    } catch (error) {
+        console.error('Errore durante il logout:', error);
+    }
+};
+</script>
+
 <style scoped>
+
 .nav-link.active{
     transform: 2rem;
     font-weight: 600;
