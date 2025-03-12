@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\TaskTypeController;
+use App\Http\Controllers\UserController;
 use App\Models\KanBan;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\BoardColumnTaskController;
@@ -40,6 +41,11 @@ Route::middleware(['auth'])->group(function () {
 
     Route::put('/api/updateTaskIndex', [BoardColumnTaskController::class, 'updateTaskIndex']);
 
+    /**
+     * Users
+     */
+    Route::get('/api/get_logged_user', [UserController::class, 'getLoggedUser']);
+    Route::post('/api/update_logged_user', [UserController::class, 'updateLoggedUser']);
 
     Route::get('{view}', KanBan::class)->where('view', '(.*)');
 
