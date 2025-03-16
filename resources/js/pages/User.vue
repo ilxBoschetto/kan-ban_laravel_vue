@@ -4,7 +4,7 @@
         <div class="col-2 border-end p-3 bg-light rounded">
             <ul class="d-flex flex-column align-items-start justify-content-center mb-0">
                 <li>
-                    <router-link to="/user" class="nav-link" exact-class="active">
+                    <router-link to="/user" class="nav-link" exact>
                         <span>
                             <font-awesome-icon :icon="['fas', 'user-cog']" class="custom-sub-nav-icon"></font-awesome-icon>
                         </span>

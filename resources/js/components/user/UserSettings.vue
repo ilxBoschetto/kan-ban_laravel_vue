@@ -5,15 +5,6 @@
         <div class="col-sm-6 pt-3">
             <form @submit.prevent="save">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Profile Picture:</label>
-                    <input
-                        type="file"
-                        class="form-control-file"
-                        id="pfp"
-                        @change="handleFileChange"
-                    />
-                </div>
-                <div class="mb-3">
                     <label for="name" class="form-label">Username:</label>
                     <input
                         type="text"
@@ -21,7 +12,9 @@
                         id="username"
                         placeholder="Username"
                         v-model="user.username"
+                        v-if="!isLoading"
                     />
+                    <div v-else class="skeleton"></div>
                 </div>
                 <div class="mb-3">
                     <label for="name" class="form-label">Old Password:</label>
@@ -29,7 +22,9 @@
                         type="password"
                         class="form-control"
                         id="old_password"
+                        v-if="!isLoading"
                     />
+                    <div v-else class="skeleton"></div>
                 </div>
                 <div class="mb-3">
                     <label for="name" class="form-label">New Password:</label>
@@ -38,7 +33,9 @@
                         class="form-control"
                         id="new_password"
                         v-model="password"
+                        v-if="!isLoading"
                     />
+                    <div v-else class="skeleton"></div>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary" @click="saveUser">Save</button>
@@ -46,8 +43,20 @@
             </form>
         </div>
         <div class="col-sm-6 d-flex justify-content-center">
-        <img :src="imageFile" style="max-height:20rem" alt="User Image">
-    </div>
+            <div v-if="!isLoading">
+                <label for="fileInput" class="image-label">
+                <img :src="imageFile" style="max-height: 20rem; border-radius: 0.5rem;" alt="">
+                </label>
+                <input
+                    type="file"
+                    id="fileInput"
+                    class="d-none"
+                    @change="handleFileChange"
+                />
+            </div>
+            <div class="ghost-loader" v-else></div>
+        </div>
+        
     </div>
 </div>
 </template>
@@ -67,6 +76,8 @@ const user = ref({
 });
 const password = ref(null);
 const imageFile = ref('/public/default-user-image.png');
+const imageToUpload = ref(null);
+const isLoading = ref(true);
 
 onMounted(() => {
     getUser();
@@ -76,10 +87,12 @@ onMounted(() => {
  * Functions
  */
 const getUser = () => {
+    isLoading.value = true;
     axios.get('/api/get_logged_user')
     .then((response) => {
         user.value = response.data;
-        imageFile.value = response.data.image;
+        imageFile.value = response.data.image || '/public/default-user-image.png';
+        isLoading.value = false;
     });
 };
 
@@ -94,8 +107,8 @@ const saveUser = () => {
         formData.append('password', password.value);
     }
 
-    if (imageFile.value) {
-        formData.append('image', imageFile.value);
+    if (imageToUpload.value) {
+        formData.append('image', imageToUpload.value);
     }
 
     axios.post('/api/update_logged_user', formData, {
@@ -104,7 +117,7 @@ const saveUser = () => {
         }
     })
     .then((response) => {
-        console.log(response);
+        location.reload();
     })
     .catch(error => {
         console.error('Error updating user:', error);
@@ -112,6 +125,51 @@ const saveUser = () => {
 };
 
 const handleFileChange = (event) => {
-    imageFile.value = event.target.files[0];
+    const file = event.target.files[0];
+    if (file) {
+        // Create preview
+        imageFile.value = URL.createObjectURL(file);
+
+        // Image to send to the backend
+        imageToUpload.value = file;
+    }
 };
+
 </script>
+<style scoped>
+.image-label:hover{
+    cursor: pointer;
+}
+.image-label{
+    border: 0.15rem solid var(--custom-primary);
+    border-radius: 0.5rem;
+}
+
+.skeleton {
+  width: 100%;
+  height: 2.5rem;
+  border-radius: 0.5rem;
+  background-color: #e0e0e0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.ghost-loader {
+  width: 100%;
+  height: 20rem;
+  border-radius: 0.5rem;
+  background-color: #e0e0e0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+  0% {
+    opacity: 0.3;
+  }
+  50% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.3;
+  }
+}
+</style>
