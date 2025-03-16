@@ -5,7 +5,8 @@
         <div class="col-sm-6 pt-3">
             <form @submit.prevent="save">
                 <div class="mb-3">
-                    <label for="name" class="form-label">Username:</label>
+                    <label for="name" class="form-label" v-if="!isLoading">Username:</label>
+                    <div v-else class="skeleton-label"></div>
                     <input
                         type="text"
                         class="form-control"
@@ -14,20 +15,22 @@
                         v-model="user.username"
                         v-if="!isLoading"
                     />
-                    <div v-else class="skeleton"></div>
+                    <div v-else class="skeleton-field"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="name" class="form-label">Old Password:</label>
+                    <label for="name" class="form-label" v-if="!isLoading">Old Password:</label>
+                    <div v-else class="skeleton-label"></div>
                     <input
                         type="password"
                         class="form-control"
                         id="old_password"
                         v-if="!isLoading"
                     />
-                    <div v-else class="skeleton"></div>
+                    <div v-else class="skeleton-field"></div>
                 </div>
                 <div class="mb-3">
-                    <label for="name" class="form-label">New Password:</label>
+                    <label for="name" class="form-label" v-if="!isLoading">New Password:</label>
+                    <div v-else class="skeleton-label"></div>
                     <input
                         type="password"
                         class="form-control"
@@ -35,7 +38,7 @@
                         v-model="password"
                         v-if="!isLoading"
                     />
-                    <div v-else class="skeleton"></div>
+                    <div v-else class="skeleton-field"></div>
                 </div>
                 <div>
                     <button type="submit" class="btn btn-primary" @click="saveUser">Save</button>
@@ -145,10 +148,19 @@ const handleFileChange = (event) => {
     border-radius: 0.5rem;
 }
 
-.skeleton {
+.skeleton-field {
   width: 100%;
   height: 2.5rem;
   border-radius: 0.5rem;
+  background-color: #e0e0e0;
+  animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-label {
+  width: 120px;
+  height: 1.25rem;
+  margin: 0 0 0.8rem 0;
+  border-radius: 0.25rem;
   background-color: #e0e0e0;
   animation: pulse 1.5s infinite ease-in-out;
 }
