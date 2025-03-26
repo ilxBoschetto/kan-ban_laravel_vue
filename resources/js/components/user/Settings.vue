@@ -3,7 +3,8 @@
       <!-- TASK TYPES -->
       <div class="row">
         <div class="col-md-12">
-          <h2 class="mb-3 text-primary"><strong>Task Types</strong></h2>
+            <div v-if="isLoadingTypes" class="skeleton-label"></div>
+          <h2 v-else class="mb-3 text-primary"><strong>Task Types</strong></h2>
   
           <div v-if="isLoadingTypes" class="skeleton-loader" :style="{ height: tableHeights.taskTypes + 'px' }"></div>
           <table v-else ref="taskTypesTable" class="table table-bordered shadow-sm">
@@ -48,7 +49,8 @@
       <!-- TASK STATUSES -->
       <div class="row mt-5">
         <div class="col-md-12">
-          <h2 class="mb-3 text-success"><strong>Task Statuses</strong></h2>
+            <div v-if="isLoadingStatuses" class="skeleton-label"></div>
+          <h2 v-else class="mb-3 text-success"><strong>Task Statuses</strong></h2>
           <div v-if="isLoadingStatuses" class="skeleton-loader" :style="{ height: tableHeights.taskStatuses + 'px' }"></div>
           <table v-else ref="taskStatusesTable" class="table table-bordered shadow-sm">
             <thead class="table-dark">
@@ -88,7 +90,9 @@
       <!-- TASK PRIORITIES -->
       <div class="row mt-5">
         <div class="col-md-12">
-          <h2 class="mb-3 text-danger"><strong>Task Priorities</strong></h2>
+            <div v-if="isLoadingPriorities" class="skeleton-label"></div>
+          <h2 v-else class="mb-3 text-danger"><strong>Task Priorities</strong></h2>
+          
           <div v-if="isLoadingPriorities" class="skeleton-loader" :style="{ height: tableHeights.taskPriorities + 'px' }"></div>
           <table v-else ref="taskPrioritiesTable" class="table table-bordered shadow-sm">
             <thead class="table-dark">
@@ -157,11 +161,41 @@
     });
 
   
-  onMounted(() => {
-    getTaskTypes();
-    getTaskStatuses();
-    getTaskPriorities();
-    setTimeout(() => {
+    onMounted(() => {
+        Promise.all([getTaskTypes(), getTaskStatuses(), getTaskPriorities()])
+            .then(() => {
+            // Dopo che tutte le chiamate alle API sono completate, calcola le altezze delle tabelle
+            calculateTableHeights();
+        })
+        .finally(() => {
+            isLoadingTypes.value = false;
+            isLoadingStatuses.value = false;
+            isLoadingPriorities.value = false;
+        });
+    });
+  
+  /**
+   * Functions
+   */
+   const getTaskTypes = () => {
+        return axios.get('/api/tasktypes').then((response) => {
+            taskTypes.value = response.data;
+        });
+    };
+  
+    const getTaskStatuses = () => {
+        return axios.get('/api/taskstatuses').then((response) => {
+            taskStatuses.value = response.data;
+        });
+    };
+  
+    const getTaskPriorities = () => {
+        return axios.get('/api/taskpriorities').then((response) => {
+            taskPriorities.value = response.data;
+        });
+    };
+
+  const calculateTableHeights = () => {
         console.log(tableHeights.value);
         if (taskTypesTable.value) {
             const height = taskTypesTable.value.clientHeight;
@@ -178,41 +212,7 @@
             tableHeights.value.taskPriorities = Math.min(height, maxTableHeight);
             localStorage.setItem('taskPrioritiesHeight', tableHeights.value.taskPriorities);
         }
-    }, 100); // Ritardo per assicurarsi che i dati siano renderizzati
-  });
-  
-  /**
-   * Functions
-   */
-  const getTaskTypes = () => {
-    axios.get('/api/tasktypes')
-      .then((response) => {
-        taskTypes.value = response.data;
-      })
-      .finally(() => {
-        isLoadingTypes.value = false;
-      });
-  };
-  
-  const getTaskStatuses = () => {
-    axios.get('/api/taskstatuses')
-      .then((response) => {
-        taskStatuses.value = response.data;
-      })
-      .finally(() => {
-        isLoadingStatuses.value = false;
-      });
-  };
-  
-  const getTaskPriorities = () => {
-    axios.get('/api/taskpriorities')
-      .then((response) => {
-        taskPriorities.value = response.data;
-      })
-      .finally(() => {
-        isLoadingPriorities.value = false;
-      });
-  };
+    };
 
   function isLightColor(hex) {
     if (!hex) return true;
@@ -227,16 +227,24 @@
   
   <style scoped>
   .skeleton-loader {
-    width: 100%;
-    background-color: #e0e0e0;
-    border-radius: 0.5rem;
-    animation: pulse 1.5s infinite ease-in-out;
+        width: 100%;
+        background-color: #e0e0e0;
+        border-radius: 0.5rem;
+        animation: pulse 1.5s infinite ease-in-out;
     }
 
     @keyframes pulse {
-    0% { opacity: 0.3; }
-    50% { opacity: 1; }
-    100% { opacity: 0.3; }
+        0% { opacity: 0.3; }
+        50% { opacity: 1; }
+        100% { opacity: 0.3; }
+    }
+    .skeleton-label {
+        width: 200px;
+        height: 2.5rem;
+        margin: 0 0 0.8rem 0;
+        border-radius: 0.25rem;
+        background-color: #e0e0e0;
+        animation: pulse 1.5s infinite ease-in-out;
     }
   </style>
   
