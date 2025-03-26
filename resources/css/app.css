@@ -16,7 +16,6 @@ body {
     font-family: sans-serif !important;
     max-height: 100% !important;
     box-sizing: border-box;
-    overflow-y: hidden;
     color: var(--custom-secondary);
     background: var(--custom-primary) !important;
 }

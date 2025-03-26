@@ -21,7 +21,7 @@ export default [
         children: [
             {
                 path: '',
-                name: 'user_default',
+                name: 'user',
                 component: UserSettings, // Pagina predefinita (dashboard o home)
             },
             {

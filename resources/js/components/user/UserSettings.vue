@@ -1,6 +1,6 @@
 <template>
 <div>
-    <strong>Impostazioni utente</strong>
+    <h3><strong>Impostazioni utente</strong></h3>
     <div class="row">
         <div class="col-sm-6 pt-3">
             <form @submit.prevent="save">
