@@ -1,10 +1,13 @@
 <template>
-    <div class="my-2 p-0">
+    <div class="container my-4">
+      <!-- TASK TYPES -->
       <div class="row">
         <div class="col-md-12">
-          <h2 class="text-primary"><strong>Task Types</strong></h2>
-          <table class="table table-striped rounded overflow-hidden">
-            <thead class="bg-primary text-white">
+          <h2 class="mb-3 text-primary"><strong>Task Types</strong></h2>
+  
+          <div v-if="isLoadingTypes" class="skeleton-loader" :style="{ height: tableHeights.taskTypes + 'px' }"></div>
+          <table v-else class="table table-bordered shadow-sm">
+            <thead class="table-dark">
               <tr>
                 <th>Name</th>
                 <th>Icon</th>
@@ -12,62 +15,83 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="type in taskTypes" :key="type.id">
-                <td>{{ type.name }}</td>
-                <td>
-                  <span class="d-flex align-items-center">
-                    <font-awesome-icon :icon="['fas', type.icon]" class="me-2 p-2 rounded-circle shadow"
-                      :style="{ backgroundColor: type.background_color, color: isLightColor(type.background_color) ? 'black' : 'white' }" />
-                    {{ type.icon }}
-                  </span>
-                </td>
-                <td>
-                  <span class="badge p-2 shadow-sm rounded-pill"
-                    :style="{ background: type.background_color, color: isLightColor(type.background_color) ? 'black' : 'white' }">
-                    {{ type.background_color }}
-                  </span>
-                </td>
-              </tr>
+              <template v-if="isLoadingTypes">
+                <tr v-for="n in 3" :key="n">
+                  <td><span class="placeholder col-6"></span></td>
+                  <td><span class="placeholder col-4"></span></td>
+                  <td><span class="placeholder col-6"></span></td>
+                </tr>
+              </template>
+              <template v-else>
+                <tr v-for="type in taskTypes" :key="type.id">
+                  <td>{{ type.name }}</td>
+                  <td>
+                    <span class="d-flex align-items-center">
+                      <font-awesome-icon :icon="['fas', type.icon]" class="me-2 p-2 rounded-circle shadow-sm"
+                        :style="{ backgroundColor: type.background_color, color: isLightColor(type.background_color) ? 'black' : 'white' }" />
+                      {{ type.icon }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge p-2"
+                      :style="{ background: type.background_color, color: isLightColor(type.background_color) ? 'black' : 'white' }">
+                      {{ type.background_color }}
+                    </span>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
       </div>
-      <hr>
-      <div class="row">
+  
+      <!-- TASK STATUSES -->
+      <div class="row mt-5">
         <div class="col-md-12">
-          <h2 class="text-success"><strong>Task Statuses</strong></h2>
-          <table class="table table-striped rounded overflow-hidden">
-            <thead class="bg-success text-white">
+          <h2 class="mb-3 text-success"><strong>Task Statuses</strong></h2>
+          <div v-if="isLoadingStatuses" class="skeleton-loader" :style="{ height: tableHeights.taskStatuses + 'px' }"></div>
+          <table v-else class="table table-bordered shadow-sm">
+            <thead class="table-dark">
               <tr>
                 <th>Status</th>
-                <th>Background Color</th>
+                <th>Color</th>
               </tr>
             </thead>
             <tbody>
-              <tr v-for="status in taskStatuses" :key="status.id">
-                <td>
-                  <span class="badge p-2 shadow-sm rounded-pill"
-                    :style="{ background: status.background_color, color: isLightColor(status.background_color) ? 'black' : 'white' }">
-                    {{ status.name }}
-                  </span>
-                </td>
-                <td>
-                  <span class="badge p-2 shadow-sm rounded-pill"
-                    :style="{ background: status.background_color, color: isLightColor(status.background_color) ? 'black' : 'white' }">
-                    {{ status.background_color }}
-                  </span>
-                </td>
-              </tr>
+              <template v-if="isLoadingStatuses">
+                <tr v-for="n in 3" :key="n">
+                  <td><span class="placeholder col-6"></span></td>
+                  <td><span class="placeholder col-6"></span></td>
+                </tr>
+              </template>
+              <template v-else>
+                <tr v-for="status in taskStatuses" :key="status.id">
+                  <td>
+                    <span class="badge p-2"
+                      :style="{ background: status.background_color, color: isLightColor(status.background_color) ? 'black' : 'white' }">
+                      {{ status.name }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge p-2"
+                      :style="{ background: status.background_color, color: isLightColor(status.background_color) ? 'black' : 'white' }">
+                      {{ status.background_color }}
+                    </span>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
       </div>
-      <hr>
-      <div class="row">
+  
+      <!-- TASK PRIORITIES -->
+      <div class="row mt-5">
         <div class="col-md-12">
           <h2 class="mb-3 text-danger"><strong>Task Priorities</strong></h2>
-          <table class="table table-striped rounded overflow-hidden">
-            <thead class="bg-danger text-white">
+          <div v-if="isLoadingPriorities" class="skeleton-loader" :style="{ height: tableHeights.taskPriorities + 'px' }"></div>
+          <table v-else class="table table-bordered shadow-sm">
+            <thead class="table-dark">
               <tr>
                 <th>Priority</th>
                 <th>Icon</th>
@@ -75,22 +99,31 @@
               </tr>
             </thead>
             <tbody>
-              <tr v-for="priority in taskPriorities" :key="priority.id">
-                <td>{{ priority.name }}</td>
-                <td>
-                  <span class="d-flex align-items-center">
-                    <font-awesome-icon :icon="['fas', priority.icon]" class="me-2 p-2 rounded-circle shadow"
-                      :style="{ backgroundColor: priority.background_color, color: isLightColor(priority.background_color) ? 'black' : 'white' }" />
-                    {{ priority.icon }}
-                  </span>
-                </td>
-                <td>
-                  <span class="badge p-2 shadow-sm rounded-pill"
-                    :style="{ background: priority.background_color, color: isLightColor(priority.background_color) ? 'black' : 'white' }">
-                    {{ priority.background_color }}
-                  </span>
-                </td>
-              </tr>
+              <template v-if="isLoadingPriorities">
+                <tr v-for="n in 3" :key="n">
+                  <td><span class="placeholder col-6"></span></td>
+                  <td><span class="placeholder col-4"></span></td>
+                  <td><span class="placeholder col-6"></span></td>
+                </tr>
+              </template>
+              <template v-else>
+                <tr v-for="priority in taskPriorities" :key="priority.id">
+                  <td>{{ priority.name }}</td>
+                  <td>
+                    <span class="d-flex align-items-center">
+                      <font-awesome-icon :icon="['fas', priority.icon]" class="me-2 p-2 rounded-circle shadow-sm"
+                        :style="{ backgroundColor: priority.background_color, color: isLightColor(priority.background_color) ? 'black' : 'white' }" />
+                      {{ priority.icon }}
+                    </span>
+                  </td>
+                  <td>
+                    <span class="badge p-2"
+                      :style="{ background: priority.background_color, color: isLightColor(priority.background_color) ? 'black' : 'white' }">
+                      {{ priority.background_color }}
+                    </span>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
@@ -99,9 +132,6 @@
   </template>
   
   <script setup>
-  /**
-   * Imports
-   */
   import { ref, onMounted } from 'vue';
   import axios from 'axios';
   
@@ -112,10 +142,39 @@
   const taskStatuses = ref([]);
   const taskPriorities = ref([]);
   
+  const isLoadingTypes = ref(true);
+  const isLoadingStatuses = ref(true);
+  const isLoadingPriorities = ref(true);
+    const taskTypesTable = ref(null);
+    const taskStatusesTable = ref(null);
+    const taskPrioritiesTable = ref(null);
+    const tableHeights = ref({
+    taskTypes: localStorage.getItem('taskTypesHeight') || 200,
+    taskStatuses: localStorage.getItem('taskStatusesHeight') || 200,
+    taskPriorities: localStorage.getItem('taskPrioritiesHeight') || 200,
+    });
+  
   onMounted(() => {
     getTaskTypes();
     getTaskStatuses();
     getTaskPriorities();
+    setTimeout(() => {
+        if (taskTypesTable.value) {
+            const height = taskTypesTable.value.clientHeight;
+            tableHeights.value.taskTypes = height;
+            localStorage.setItem('taskTypesHeight', height);
+        }
+        if (taskStatusesTable.value) {
+            const height = taskStatusesTable.value.clientHeight;
+            tableHeights.value.taskStatuses = height;
+            localStorage.setItem('taskStatusesHeight', height);
+        }
+        if (taskPrioritiesTable.value) {
+            const height = taskPrioritiesTable.value.clientHeight;
+            tableHeights.value.taskPriorities = height;
+            localStorage.setItem('taskPrioritiesHeight', height);
+        }
+    }, 100); // Ritardo per assicurarsi che i dati siano renderizzati
   });
   
   /**
@@ -125,6 +184,9 @@
     axios.get('/api/tasktypes')
       .then((response) => {
         taskTypes.value = response.data;
+      })
+      .finally(() => {
+        isLoadingTypes.value = false;
       });
   };
   
@@ -132,6 +194,9 @@
     axios.get('/api/taskstatuses')
       .then((response) => {
         taskStatuses.value = response.data;
+      })
+      .finally(() => {
+        isLoadingStatuses.value = false;
       });
   };
   
@@ -139,23 +204,35 @@
     axios.get('/api/taskpriorities')
       .then((response) => {
         taskPriorities.value = response.data;
+      })
+      .finally(() => {
+        isLoadingPriorities.value = false;
       });
   };
 
   function isLightColor(hex) {
-  if (!hex) return true; // Se non c'è colore, assume sfondo chiaro
-
-  hex = hex.replace('#', ''); // Rimuove il simbolo #
-
-  // Converte il colore in RGB
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  // Calcola la luminosità
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-  return brightness > 180; // Se è luminoso, ritorna true
-}
+    if (!hex) return true;
+    hex = hex.replace('#', '');
+    const r = parseInt(hex.substring(0, 2), 16);
+    const g = parseInt(hex.substring(2, 4), 16);
+    const b = parseInt(hex.substring(4, 6), 16);
+    const brightness = (r * 299 + g * 587 + b * 114) / 1000;
+    return brightness > 180;
+  }
   </script>
+  
+  <style scoped>
+  .skeleton-loader {
+    width: 100%;
+    background-color: #e0e0e0;
+    border-radius: 0.5rem;
+    animation: pulse 1.5s infinite ease-in-out;
+    }
+
+    @keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+    }
+  </style>
   
