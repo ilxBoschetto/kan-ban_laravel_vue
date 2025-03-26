@@ -6,7 +6,7 @@
           <h2 class="mb-3 text-primary"><strong>Task Types</strong></h2>
   
           <div v-if="isLoadingTypes" class="skeleton-loader" :style="{ height: tableHeights.taskTypes + 'px' }"></div>
-          <table v-else class="table table-bordered shadow-sm">
+          <table v-else ref="taskTypesTable" class="table table-bordered shadow-sm">
             <thead class="table-dark">
               <tr>
                 <th>Name</th>
@@ -50,7 +50,7 @@
         <div class="col-md-12">
           <h2 class="mb-3 text-success"><strong>Task Statuses</strong></h2>
           <div v-if="isLoadingStatuses" class="skeleton-loader" :style="{ height: tableHeights.taskStatuses + 'px' }"></div>
-          <table v-else class="table table-bordered shadow-sm">
+          <table v-else ref="taskStatusesTable" class="table table-bordered shadow-sm">
             <thead class="table-dark">
               <tr>
                 <th>Status</th>
@@ -90,7 +90,7 @@
         <div class="col-md-12">
           <h2 class="mb-3 text-danger"><strong>Task Priorities</strong></h2>
           <div v-if="isLoadingPriorities" class="skeleton-loader" :style="{ height: tableHeights.taskPriorities + 'px' }"></div>
-          <table v-else class="table table-bordered shadow-sm">
+          <table v-else ref="taskPrioritiesTable" class="table table-bordered shadow-sm">
             <thead class="table-dark">
               <tr>
                 <th>Priority</th>
@@ -138,41 +138,45 @@
   /**
    * Variables
    */
-  const taskTypes = ref([]);
-  const taskStatuses = ref([]);
-  const taskPriorities = ref([]);
-  
-  const isLoadingTypes = ref(true);
-  const isLoadingStatuses = ref(true);
-  const isLoadingPriorities = ref(true);
+    const taskTypes = ref([]);
+    const taskStatuses = ref([]);
+    const taskPriorities = ref([]);
+
+    const isLoadingTypes = ref(true);
+    const isLoadingStatuses = ref(true);
+    const isLoadingPriorities = ref(true);
     const taskTypesTable = ref(null);
     const taskStatusesTable = ref(null);
     const taskPrioritiesTable = ref(null);
+    const maxTableHeight = 400; // Imposta un limite massimo per le altezze delle tabelle
+
     const tableHeights = ref({
-    taskTypes: localStorage.getItem('taskTypesHeight') || 200,
-    taskStatuses: localStorage.getItem('taskStatusesHeight') || 200,
-    taskPriorities: localStorage.getItem('taskPrioritiesHeight') || 200,
+        taskTypes: Math.min(localStorage.getItem('taskTypesHeight') || 200, maxTableHeight),
+        taskStatuses: Math.min(localStorage.getItem('taskStatusesHeight') || 200, maxTableHeight),
+        taskPriorities: Math.min(localStorage.getItem('taskPrioritiesHeight') || 200, maxTableHeight),
     });
+
   
   onMounted(() => {
     getTaskTypes();
     getTaskStatuses();
     getTaskPriorities();
     setTimeout(() => {
+        console.log(tableHeights.value);
         if (taskTypesTable.value) {
             const height = taskTypesTable.value.clientHeight;
-            tableHeights.value.taskTypes = height;
-            localStorage.setItem('taskTypesHeight', height);
+            tableHeights.value.taskTypes = Math.min(height, maxTableHeight);
+            localStorage.setItem('taskTypesHeight', tableHeights.value.taskTypes);
         }
         if (taskStatusesTable.value) {
             const height = taskStatusesTable.value.clientHeight;
-            tableHeights.value.taskStatuses = height;
-            localStorage.setItem('taskStatusesHeight', height);
+            tableHeights.value.taskStatuses = Math.min(height, maxTableHeight);
+            localStorage.setItem('taskStatusesHeight', tableHeights.value.taskStatuses);
         }
         if (taskPrioritiesTable.value) {
             const height = taskPrioritiesTable.value.clientHeight;
-            tableHeights.value.taskPriorities = height;
-            localStorage.setItem('taskPrioritiesHeight', height);
+            tableHeights.value.taskPriorities = Math.min(height, maxTableHeight);
+            localStorage.setItem('taskPrioritiesHeight', tableHeights.value.taskPriorities);
         }
     }, 100); // Ritardo per assicurarsi che i dati siano renderizzati
   });
