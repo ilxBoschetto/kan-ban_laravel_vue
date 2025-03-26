@@ -1,8 +1,10 @@
 <template>
     <div class="kanban-dashboard-container">
-    <div id="spinner-wheel" class="loader-container">
-        <font-awesome-icon :icon="['fas', 'spinner']" spin class="loader-icon"></font-awesome-icon>
-    </div>
+      <div v-if="isStillLoading" id="spinner-wheel" class="loader-container">
+          <font-awesome-icon :icon="['fas', 'spinner']" spin class="loader-icon"></font-awesome-icon>
+      </div>
+      <div v-else>
+
       <h1 class="mb-4">Kanban Dashboard</h1>
   
       <div class="row mb-4">
@@ -95,6 +97,7 @@
             </div>
         </div>
         </div>
+      </div>
     </div>
   </template>
   
@@ -113,6 +116,7 @@ const tasks = ref([]);
 const taskTypes = ref([]);
 const taskStatuses = ref([]);
 const taskPriorities = ref([]);
+const isStillLoading = ref(false);
 
 /**
  * Functions
@@ -153,9 +157,11 @@ const loadingCallback = (isLoading) => {
     if (isLoading) {
         $('#spinner-wheel').removeClass('d-none');
         $('#spinner-wheel').addClass('d-flex');
+        isStillLoading.value = true;
     } else {
         $('#spinner-wheel').addClass('d-none');
         $('#spinner-wheel').removeClass('d-flex');
+        isStillLoading.value = false;
     }
 }
 
