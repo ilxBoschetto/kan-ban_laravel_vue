@@ -1,7 +1,5 @@
 <template>
   <div class="kanban-column flex-1 mx-2" :style="{
-    background: background,
-    color: isLightColor(props.background) ? '#323333' : 'white',
     maxWidth: '20%',
     minHeight: '100px',
     height: 'min-content'
@@ -10,20 +8,17 @@
       <div class="col">
         <h2 class="font-bold">{{ name }}</h2>
       </div>
-      <div class="column-option-container col-sm-3 d-flex justify-content-end align-items-center gap-2">
-        <button @click="addTask" type="button" class="text-white rounded">
-          <font-awesome-icon :icon="['fa-solid', 'square-plus']"
-            :style="{ fontSize: '1.55rem', color: isLightColor(props.background) ? '#323333' : 'white' }" />
+      <div class="column-option-container col-sm-3 d-flex justify-content-end align-items-center">
+        <button @click="addTask" type="button">
+          <font-awesome-icon :icon="['fa-solid', 'square-plus']"/>
         </button>
-        <button @click="editColumn" type="button" class="text-white rounded">
-          <font-awesome-icon :icon="['fas', 'pen']"
-            :style="{ color: isLightColor(props.background) ? '#323333' : 'white' }" />
+        <button @click="editColumn" type="button">
+          <font-awesome-icon :icon="['fas', 'pen']"/>
         </button>
         <button @click="deleteColumn(id)" type="button">
           <font-awesome-icon :icon="['fas', 'trash']" :style="{ color: 'red' }">
           </font-awesome-icon>
         </button>
-
       </div>
     </div>
     <hr style="border-bottom:rgb(150, 150, 150) solid 0.1rem; margin: 0 2rem 0 2rem">
@@ -123,21 +118,5 @@ const deleteColumn = () => {
       emit('columnDeleted', props.id);
     });
 };
-
-function isLightColor(hex) {
-  if (!hex) return true; // Se non c'è colore, assume sfondo chiaro
-
-  hex = hex.replace('#', ''); // Rimuove il simbolo #
-
-  // Converte il colore in RGB
-  const r = parseInt(hex.substring(0, 2), 16);
-  const g = parseInt(hex.substring(2, 4), 16);
-  const b = parseInt(hex.substring(4, 6), 16);
-
-  // Calcola la luminosità
-  const brightness = (r * 299 + g * 587 + b * 114) / 1000;
-
-  return brightness > 180; // Se è luminoso, ritorna true
-}
 
 </script>

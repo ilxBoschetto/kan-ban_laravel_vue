@@ -4,12 +4,56 @@
 @tailwind utilities;
 
 :root {
-    --custom-primary: #02466d;
-    --custom-secondary: #e8e8e8;
-    --custom-accent: #7d0225;
-    --custom-light: #fcfbfb;
-}
-
+    --custom-primary: #5e6472;
+    --custom-secondary: #c0c5ce;
+    --custom-accent: #9aa0a6;
+    --custom-light: #f5f7fa;
+  
+    --custom-bg: var(--custom-light);
+    --custom-surface: #ffffff;
+    --custom-surface-alt: #ebeff2;
+    --custom-border: #d4d7db;
+    --custom-shadow: rgba(0, 0, 0, 0.04);
+  
+    --custom-text: #2f343f;
+    --custom-text-secondary: #5e6472;
+  
+    --custom-success: #8ab17d;
+    --custom-warning: #e2b844;
+    --custom-error: #c77272;
+    --custom-info: #5a7d9a;
+  
+    /* Skeleton */
+    --custom-skeleton-base: #e2e6ea;
+    --custom-skeleton-shine: #f5f7fa;
+  }
+  
+  [data-theme="dark"] {
+    --custom-primary: #c0c5ce;
+    --custom-secondary: #5e6472;
+    --custom-accent: #7c828a;
+    --custom-light: #1a1c20;
+  
+    --custom-bg: var(--custom-light);
+    --custom-surface: #272a2f;
+    --custom-surface-alt: #34373d;
+    --custom-border: #495057;
+    --custom-shadow: rgba(0, 0, 0, 0.3);
+  
+    --custom-text: #f5f7fa;
+    --custom-text-secondary: #c0c5ce;
+  
+    --custom-success: #a3c9a8;
+    --custom-warning: #f0c674;
+    --custom-error: #e18b8b;
+    --custom-info: #8caac4;
+  
+    /* Skeleton */
+    --custom-skeleton-base: #2e3237;
+    --custom-skeleton-shine: #3c4147;
+  }
+  
+  
 body {
     margin: 0;
     padding: 0;
@@ -31,6 +75,7 @@ body {
     border-radius: 5px;
     overflow: visible;
     min-height: min-content;
+    background-color: var(--custom-surface);
 }
 
 .kanban-add-column {
@@ -55,6 +100,11 @@ body {
 .kanban-column-header {
     border-radius: 1rem 1rem 0 0;
     padding: 1rem;
+    color: var(--custom-text);
+}
+
+.task-description{
+    color: var(--custom-text-secondary);
 }
 
 .kanban-column-header * {
@@ -68,12 +118,35 @@ body {
 }
 
 .kanban-card {
-    background: var(--custom-light);
+    background: var(--custom-surface-alt);
+    border: 0.1rem solid var(--custom-border);
     margin: 10px 0;
+    color: var(--custom-text);
+    box-shadow: 0rem 0rem 0.2rem var(--custom-shadow);
     border-radius: 10px;
     padding: 15px;
     width: 100%;
     transition: all 0.3s ease;
+}
+
+.settings-lateral-menu{
+    padding: 2rem;
+    border: 0.1rem solid var(--custom-border);
+    background-color: var(--custom-surface-alt);
+    border-radius: 1rem;
+}
+.settings-user-form{
+    color: var(--custom-text);
+}
+
+.priority-box {
+    color: var(--custom-text);
+    border-width: 0.1rem;
+    border-style: solid;
+    font-size: 1.1rem;
+    box-shadow: 0.1rem 0.1rem 0.3rem var(--custom-shadow);
+    padding: 0.25rem;
+    border-radius: 0.2rem;
 }
 
 .column-option-container {
@@ -83,8 +156,13 @@ body {
     transition: opacity 0.4s ease, visibility 0s 0.4s;
 }
 
+.column-option-container > button {
+    color: var(--custom-text);
+    background-color: transparent;
+    padding: 0.5rem;
+}
+
 .column-option-container:hover {
-    opacity: 0;
     transition: opacity 0.4s, visibility 0.4s;
 }
 
@@ -121,13 +199,13 @@ body {
     z-index: 10000;
 }
 .kanban-dashboard-container{
-    background: var(--custom-secondary);
+    background: var(--custom-surface);
     border-radius: 0.5rem;
     padding: 2rem 2rem;
     max-height: 50rem;
 }
 .kanban-user-container{
-    background: var(--custom-secondary);
+    background: var(--custom-surface);
     border-radius: 0.5rem;
     padding: 2rem 2rem;
 }
@@ -138,12 +216,12 @@ body {
 }
 
 .custom-navbar {
-    background: var(--custom-secondary);
+    background: var(--custom-surface);
     padding: 0.2rem;
     border-radius: 1rem;
     max-width: 20rem;
     margin: 0.5rem 1rem;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 0.3rem 0.3rem var(--custom-shadow);
 }
 
 ul {
@@ -167,10 +245,70 @@ li {
     color: var(--custom-accent);
     transform: scale(1.1);
 }
+
+.nav-link.active{
+    transform: 20rem;
+    font-weight: 600;
+    color: var(--custom-accent);
+}
+
 .custom-nav-icon{
     font-size:1.8rem;
+    color: var(--custom-text);
 }
 
 .custom-sub-nav-icon{
     font-size:1.3rem;
+    color: var(--custom-text);
+}
+
+.custom-sub-nav-text{
+    color: var(--custom-text);
+}
+
+.home-card{
+    border: 0.1rem solid var(--custom-border);
+    border-radius: 0.2rem;
+}
+
+.ghost{
+    opacity:0.4;
+    border-color: var(--custom-border);
+}
+
+.ghost > div{
+    visibility: hidden;
+    transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.card-icon {
+    padding: 0.4rem;
+    border-radius: 20%;
+    color: var(--custom-surface-alt);
+}
+
+.skeleton-loader {
+    width: 100%;
+    background-color: var(--custom-skeleton-base);
+    border-radius: 0.5rem;
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+.skeleton-label {
+    width: 200px;
+    height: 2.5rem;
+    margin: 0 0 0.8rem 0;
+    border-radius: 0.25rem;
+    background-color: var(--custom-skeleton-base);
+    animation: pulse 1.5s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.3; }
+    50% { opacity: 1; }
+    100% { opacity: 0.3; }
+}
+
+.modal-content {
+    background-color: var(--custom-surface) !important;
 }

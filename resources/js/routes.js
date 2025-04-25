@@ -1,9 +1,9 @@
 import KanBan from './pages/KanBan.vue';
 import User from './pages/User.vue';
 import Home from './pages/Home.vue';
-import UserHome from './components/user/UserHome.vue';
 import UserSettings from './components/user/UserSettings.vue';
 import Settings from './components/user/Settings.vue';
+import Theme from './components/user/Theme.vue'
 export default [
     {
         path: '/kanban',
@@ -25,14 +25,14 @@ export default [
                 component: UserSettings, // Pagina predefinita (dashboard o home)
             },
             {
-                path: 'user_home',
-                name: 'user_home',
-                component: UserHome,
-            },
-            {
                 path: 'settings',
                 name: 'settings',
                 component: Settings,
+            },
+            {
+                path: 'theme',
+                name: 'theme',
+                component: Theme,
             },
         ],
     },

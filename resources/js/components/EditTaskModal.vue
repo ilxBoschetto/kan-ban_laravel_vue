@@ -207,7 +207,6 @@ const getIconClass = (task_type_id, taskInfo) => {
 const getIconStyle = (task_type_id, taskInfos) => {
   const taskInfo = taskInfos.find(type => type.id == task_type_id);
   return {
-    backgroundColor: taskInfo ? taskInfo.background_color : 'white',
     padding: '0.4rem',
     borderRadius: '20%',
     color: 'black', // Per contrasto
