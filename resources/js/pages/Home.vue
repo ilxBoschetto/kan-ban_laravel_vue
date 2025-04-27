@@ -1,15 +1,15 @@
 <template>
   <div class="kanban-dashboard-container">
-    <div v-if="isStillLoading" id="spinner-wheel" class="loader-container">
-        <font-awesome-icon :icon="['fas', 'spinner']" spin class="loader-icon"></font-awesome-icon>
-    </div>
-    <div v-else>
 
     <h1 class="mb-4">Kanban Dashboard</h1>
 
     <div class="row mb-4">
+      <div v-if="isLoading" class=" col-md-4">
+        <div class="skeleton-home-card mb-3">
+        </div>
+      </div>
       <!-- Task Totali -->
-      <div class="col-md-4">
+      <div v-else class="col-md-4">
       <div class="card text-white bg-dark mb-3 position-relative">
           <div class="card-body">
           <h5 class="card-title">Task Totali</h5>
@@ -19,7 +19,11 @@
       </div>
     </div>
     <div class="row mb-4">
-      <div v-for="taskStatus in taskStatuses" :key="taskStatus.id" class="col-md-4">
+      <div v-if="isLoading" v-for="n in 3" :key="n" class=" col-md-4">
+        <div class="skeleton-home-card">
+        </div>
+      </div>
+      <div v-else v-for="taskStatus in taskStatuses" :key="taskStatus.id" class="col-md-4">
           <div class="home-card" :class="{
               'text-dark': isLightColor(taskStatus.background_color),
               'text-white': !isLightColor(taskStatus.background_color)
@@ -40,7 +44,11 @@
       </div>
     </div>
     <div class="row mb-4">
-      <div v-for="taskType in taskTypes" :key="taskType.id" class="col-md-4">
+      <div v-if="isLoading" v-for="n in 3" :key="n" class=" col-md-4">
+        <div class="skeleton-home-card">
+        </div>
+      </div>
+      <div v-else v-for="taskType in taskTypes" :key="taskType.id" class="col-md-4">
           <div class="home-card" :class="{
           'text-dark': isLightColor(taskType.background_color),
           'text-white': !isLightColor(taskType.background_color)
@@ -69,7 +77,11 @@
       </div>
       </div>
       <div class="row mb-4">
-      <div v-for="taskPriority in taskPriorities" :key="taskPriority.id" class="col-md-4">
+        <div v-if="isLoading" v-for="n in 3" :key="n" class=" col-md-4">
+        <div class="skeleton-home-card">
+        </div>
+      </div>
+        <div v-else v-for="taskPriority in taskPriorities" :key="taskPriority.id" class="col-md-4">
           <div class="home-card" :class="{
           'text-dark': isLightColor(taskPriority.background_color),
           'text-white': !isLightColor(taskPriority.background_color)
@@ -84,7 +96,6 @@
           </div>
           <div class="card-body">
               <h5 class="card-title">
-                  
                   {{ taskPriority.name }}</h5>
               <p class="card-text display-4">
                   <font-awesome-icon
@@ -95,9 +106,8 @@
                   {{ tasks.filter(task => task.task_priority_id === taskPriority.id).length }}</p>
           </div>
           </div>
+        </div>
       </div>
-      </div>
-    </div>
   </div>
 </template>
 
@@ -116,21 +126,26 @@ const tasks = ref([]);
 const taskTypes = ref([]);
 const taskStatuses = ref([]);
 const taskPriorities = ref([]);
-const isStillLoading = ref(false);
+const isLoading = ref(true);
 
 /**
 * Functions
 */
 onMounted(() => {
-initKanBan();
-getTaskTypes();
-getTaskStatuses();
-getTaskPriorities();
+  Promise.all([
+    initKanBan(),
+    getTaskTypes(),
+    getTaskStatuses(),
+    getTaskPriorities()
+  ]).finally(() => {
+    isLoading.value = false;
+  });
 })
 
+
+
 const initKanBan = () => {
-loadingCallback(true);
-axios.get('/api/kanban', {
+return axios.get('/api/kanban', {
   params: {
     boardId: boardId
   }
@@ -142,45 +157,32 @@ axios.get('/api/kanban', {
 };
 
 const getAllTasks = () => {
-  axios.get('/api/alltasks', {
+  return axios.get('/api/alltasks', {
   params: {
     boardId: boardId
   }
 })
   .then((response) => {
       tasks.value = response.data;
-      loadingCallback(false);
   });
 }
 
-const loadingCallback = (isLoading) => {
-  if (isLoading) {
-      $('#spinner-wheel').removeClass('d-none');
-      $('#spinner-wheel').addClass('d-flex');
-      isStillLoading.value = true;
-  } else {
-      $('#spinner-wheel').addClass('d-none');
-      $('#spinner-wheel').removeClass('d-flex');
-      isStillLoading.value = false;
-  }
-}
-
 const getTaskTypes = () => {
-axios.get('/api/tasktypes')
+ return axios.get('/api/tasktypes')
   .then((response) => {
     taskTypes.value = response.data;
   });
 };
 
 const getTaskStatuses = () => {
-axios.get('/api/taskstatuses')
+return axios.get('/api/taskstatuses')
   .then((response) => {
     taskStatuses.value = response.data;
   });
 };
 
 const getTaskPriorities = () => {
-axios.get('/api/taskpriorities')
+return axios.get('/api/taskpriorities')
   .then((response) => {
     taskPriorities.value = response.data;
   });
