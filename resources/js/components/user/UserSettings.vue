@@ -41,7 +41,7 @@
                         <div v-else class="skeleton-field"></div>
                     </div>
                     <div>
-                        <button type="submit" class="btn btn-primary" @click="saveUser">Save</button>
+                        <button type="submit" class="custom-success-button" @click="saveUser">Save</button>
                     </div>
                 </form>
             </div>

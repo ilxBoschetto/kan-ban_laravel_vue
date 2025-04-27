@@ -1,16 +1,23 @@
 <template>
   
   <div>
-    <div id="spinner-wheel" class="loader-container">
-      <font-awesome-icon :icon="['fas', 'spinner']" spin class="loader-icon"></font-awesome-icon>
-    </div>
-    <div class="flex justify-start" :style="{ height: '100%' }">
-      <KanbanColumn v-for="column in columns" :key="column.id" :id="column.id" :name="column.name"
-        :background="column.background" :tasks="column.tasks" @addTask="openAddTaskModal"
-        @editColumn="openEditColumnModal" @columnAdded="addColumn" @columnDeleted="deleteColumn">
+    <div v-if="isLoadingColumns" class="d-flex">
+        <div v-for="n in 4" :key="n" class="skeleton-column"></div>
+      </div>
+    <div v-else class="flex justify-start" :style="{ height: '100%' }">
+      <KanbanColumn v-for="column in columns" :key="column.id"
+      :id="column.id"
+      :name="column.name"
+      :background="column.background"
+      :tasks="column.tasks"
+      @addTask="openAddTaskModal"
+      @editColumn="openEditColumnModal"
+      @columnAdded="addColumn"
+      @columnDeleted="deleteColumn"
+      >
       </KanbanColumn>
       <div class="kanban-add-column flex-1 mx-2" @click="openEditColumnModal()"
-        :style="{ background: 'transparent', maxWidth: '20%', height: '100px' }">
+        :style="{ background: 'transparent', maxWidth: '20%', height: '4rem' }">
         <font-awesome-icon :icon="['fas', 'plus']">
         </font-awesome-icon>
       </div>
@@ -53,6 +60,8 @@ const isTaskModalOpen = ref(false);
 const taskTypes = ref([]);
 const taskStatuses = ref([]);
 const taskPriorities = ref([]);
+const isLoadingTasks = ref(true);
+const isLoadingColumns = ref(true);
 const currentColumn = ref({
   id: null,
   name: '',
@@ -68,11 +77,16 @@ const board = ref({
 });
 
 onMounted(() => {
-  initKanBan();
-  getTaskTypes();
-  getTaskStatuses();
-  getTaskPriorities();
-})
+  Promise.all([
+    initKanBan(),
+    getTaskTypes(),
+    getTaskStatuses(),
+    getTaskPriorities()
+  ]).finally(() => {
+    isLoadingColumns.value = false;
+  });
+});
+
 
 /**
  * Functions
@@ -120,19 +134,8 @@ function saveTask(task) {
   closeTaskModal();
 }
 
-const loadingCallback = (isLoading) => {
-    if (isLoading) {
-        $('#spinner-wheel').removeClass('d-none');
-        $('#spinner-wheel').addClass('d-flex');
-    } else {
-        $('#spinner-wheel').addClass('d-none');
-        $('#spinner-wheel').removeClass('d-flex');
-    }
-}
-
 const initKanBan = () => {
-  loadingCallback(true);
-  axios.get('/api/kanban', {
+  return axios.get('/api/kanban', {
     params: {
       boardId: boardId
     }
@@ -140,7 +143,6 @@ const initKanBan = () => {
     .then((response) => {
       board.value = response.data;
       columns.value = response.data.columns;
-      loadingCallback(false);
     });
 };
 
@@ -207,21 +209,21 @@ const updateTask = (task) => {
 }
 
 const getTaskTypes = () => {
-  axios.get('/api/tasktypes')
+  return axios.get('/api/tasktypes')
     .then((response) => {
       taskTypes.value = response.data;
     });
 };
 
 const getTaskStatuses = () => {
-  axios.get('/api/taskstatuses')
+  return axios.get('/api/taskstatuses')
     .then((response) => {
       taskStatuses.value = response.data;
     });
 };
 
 const getTaskPriorities = () => {
-  axios.get('/api/taskpriorities')
+  return axios.get('/api/taskpriorities')
     .then((response) => {
       taskPriorities.value = response.data;
     });
