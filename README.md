@@ -19,16 +19,16 @@ A dynamic Kanban board built with Laravel and Vue.js to manage tasks efficiently
 Take a look at some of the key features:
 
 Overview of the Kanban dashboard
-![Dashboard View](resources/screenshots/dashboard.png)  
+![Dashboard View](resources/screenshots/dashboard.PNG)  
 
 Tasks organized in columns, ready for drag and drop
-![Kanban Board](resources/screenshots/kanban.png)  
+![Kanban Board](resources/screenshots/kanban.PNG)  
 
 Theme customization options
-![Theme Customization](resources/screenshots/theme.png)  
+![Theme Customization](resources/screenshots/theme.PNG)  
 
 Manage user
-![User Management](resources/screenshots/user.png)  
+![User Management](resources/screenshots/user.PNG)  
 
 
 ## **Installation** ⚙️
