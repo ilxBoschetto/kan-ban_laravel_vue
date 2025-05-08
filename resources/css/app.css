@@ -349,6 +349,13 @@
     --custom-skeleton-shine: #5f5a6b;
 }
 
+#app {
+    background-color: var(--custom-primary);
+    color: var(--custom-text);
+    padding: 2rem;
+    transition: background-color 0.3s ease, color 0.3s ease;
+}
+
 body {
     margin: 0;
     padding: 0;

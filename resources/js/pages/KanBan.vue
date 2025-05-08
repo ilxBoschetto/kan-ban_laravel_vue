@@ -48,6 +48,7 @@ import KanbanColumn from '../components/KanbanColumn.vue';
 import EditColumnModal from '../components/EditColumnModal.vue';
 import axios from 'axios';
 import EditTaskModal from '../components/EditTaskModal.vue';
+import { currentTheme, setTheme } from '../theme.js';
 
 /**
  * Variables
@@ -77,6 +78,9 @@ const board = ref({
 });
 
 onMounted(() => {
+  let theme = localStorage.getItem('theme');
+  currentTheme.value = theme ?? 'light';
+  setTheme(currentTheme.value);
   Promise.all([
     initKanBan(),
     getTaskTypes(),
